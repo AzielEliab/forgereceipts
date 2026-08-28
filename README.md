@@ -94,3 +94,28 @@ The UI binds **127.0.0.1 only**. Self-contained CSS. No CDN.
 ## Motto
 
 Child's Best Interests First. Integrity Over Narrative. Local Control. Always.
+
+## Use with Grok, ChatGPT, Venice
+
+Live HTTPS runtime on the download-tracker Worker (does **not** increment the download counter):
+
+- OpenAPI 3.1: https://forgereceipts-download-tracker.vibelock.workers.dev/openapi.json
+- Health: https://forgereceipts-download-tracker.vibelock.workers.dev/v1/health
+- How to wire tools: https://forgereceipts-download-tracker.vibelock.workers.dev/ai
+- MCP catalog: https://aziel-runtime.vibelock.workers.dev/mcp
+
+POST /v1/receipt {note, context?}. Local-style receipt JSON. Every response banners **Not legal advice. No court filing.** Child-best-interests motto. Does not call Odyssey or any court.
+
+**ChatGPT Actions:** GPT Editor → Actions → Import from URL → `https://forgereceipts-download-tracker.vibelock.workers.dev/openapi.json` (no auth).
+
+**Grok / xAI tools:** add an HTTP/OpenAPI tool pointing at `https://forgereceipts-download-tracker.vibelock.workers.dev/openapi.json`.
+
+**Venice HTTP tools:** add an HTTP tool with method, URL, and JSON body from that spec. Start with GET `https://forgereceipts-download-tracker.vibelock.workers.dev/v1/health`.
+
+```bash
+curl -sS -X POST https://forgereceipts-download-tracker.vibelock.workers.dev/v1/receipt \
+  -H 'content-type: application/json' \
+  -d '{"note":"Parenting time 2pm-6pm, child calm"}'
+```
+
+GET `/download` still serves the gzip tarball and is counted.

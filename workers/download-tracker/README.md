@@ -35,3 +35,16 @@ No secrets belong in this directory.
 
 Default asset: `forgereceipts-0.1.0.tar.gz`
 GitHub: `https://github.com/AzielEliab/forgereceipts`
+
+## Use with Grok, ChatGPT, Venice
+
+This Worker also hosts the product runtime API (CORS `*`). `/v1` routes do **not** increment `DOWNLOADS`.
+
+| Method | Path | Notes |
+|--------|------|-------|
+| GET | `/v1/health` | Liveness |
+| GET | `/openapi.json` | OpenAPI 3.1 |
+| GET | `/ai` | ChatGPT Actions, Grok/xAI tools, Venice HTTP tools; MCP catalog |
+
+See the product README section **Use with Grok, ChatGPT, Venice**.
+OpenAPI: https://forgereceipts-download-tracker.vibelock.workers.dev/openapi.json
