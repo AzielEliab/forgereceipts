@@ -16,6 +16,19 @@ How to contribute: [CONTRIBUTING.md](CONTRIBUTING.md).
 
 **Forks are welcome and always allowed.**
 
+## Quick start
+
+```bash
+python -m venv .venv && source .venv/bin/activate && pip install -e ".[dev]"
+forgereceipts ui
+```
+
+Open http://127.0.0.1:8787 (loopback only). No CDN, no telemetry. Not legal advice.
+
+Counted download: [https://forgereceipts-download-tracker.vibelock.workers.dev/](https://forgereceipts-download-tracker.vibelock.workers.dev/)
+
+
+
 ---
 
 ## Download
@@ -33,6 +46,19 @@ Direct tarball (also counted): [forgereceipts-0.1.0.tar.gz](https://forgereceipt
 
 - Live count JSON: [https://forgereceipts-download-tracker.vibelock.workers.dev/count](https://forgereceipts-download-tracker.vibelock.workers.dev/count)
 - GitHub: [https://github.com/AzielEliab/forgereceipts](https://github.com/AzielEliab/forgereceipts)
+
+---
+
+## iPhone & Android
+
+A local-first Flutter client lives in [`mobile/`](mobile/). Open that
+folder in Android Studio or Xcode through Flutter (`flutter create .`
+first if `android/` / `ios/` still hold the skeleton READMEs). On-device
+receipt list, add a note, **Not legal advice** banner. No court filing.
+
+Counted desktop download: [https://forgereceipts-download-tracker.vibelock.workers.dev/](https://forgereceipts-download-tracker.vibelock.workers.dev/)
+
+Forks are welcome and always allowed.
 
 ---
 

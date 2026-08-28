@@ -19,7 +19,8 @@ def main(argv: list[str] | None = None) -> int:
         prog="forgereceipts",
         description=(
             "ForgeReceipts — local-first evidence integrity. "
-            "Not legal advice. Binds 127.0.0.1 only."
+            "Not legal advice. Local UI: `forgereceipts ui` at http://127.0.0.1:8787. "
+            "Binds 127.0.0.1 only."
         ),
     )
     sub = parser.add_subparsers(dest="cmd")
