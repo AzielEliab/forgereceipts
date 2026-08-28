@@ -1,0 +1,147 @@
+/* StaticClock local UI. No CDN. Advisory hygiene, not strategy. */
+:root {
+  --ink: #1c1916;
+  --paper: #f3eee4;
+  --rule: #c9c0b0;
+  --muted: #6b6458;
+  --panel: #fffaf1;
+  --mark: #7a2e24;
+  --ok: #2c4a3e;
+  font-synthesis: none;
+}
+* { box-sizing: border-box; }
+html, body {
+  margin: 0;
+  padding: 0;
+  background: var(--paper);
+  color: var(--ink);
+  font-family: "Iowan Old Style", Palatino, "Palatino Linotype", "Times New Roman", serif;
+  line-height: 1.45;
+}
+body {
+  max-width: 52rem;
+  margin: 0 auto;
+  padding: 2.25rem 1.25rem 4rem;
+}
+header h1 {
+  font-size: 1.85rem;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  margin: 0 0 0.25rem;
+}
+header .tag {
+  font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+  font-size: 0.78rem;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+}
+header p.lede {
+  margin: 1rem 0 0;
+  max-width: 40rem;
+}
+hr.rule {
+  border: 0;
+  border-top: 1px solid var(--rule);
+  margin: 1.5rem 0;
+}
+label {
+  display: block;
+  font-size: 0.92rem;
+  margin-bottom: 0.35rem;
+}
+label span.kicker {
+  display: block;
+  font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+  font-size: 0.7rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-bottom: 0.15rem;
+}
+input[type="text"], select {
+  width: 100%;
+  padding: 0.55rem 0.65rem;
+  border: 1px solid var(--ink);
+  background: var(--panel);
+  color: var(--ink);
+  font: inherit;
+  font-size: 1rem;
+}
+.row { margin-bottom: 1rem; }
+.or {
+  text-align: center;
+  color: var(--muted);
+  font-size: 0.8rem;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  margin: 0.4rem 0 0.9rem;
+}
+button.advise {
+  appearance: none;
+  border: 1px solid var(--ink);
+  background: var(--ink);
+  color: var(--paper);
+  font: inherit;
+  padding: 0.55rem 1.1rem;
+  cursor: pointer;
+  letter-spacing: 0.04em;
+}
+button.advise:hover { background: var(--mark); border-color: var(--mark); }
+button.advise:disabled { opacity: 0.5; cursor: wait; }
+.output {
+  margin-top: 1.75rem;
+  border: 1px solid var(--ink);
+  background: var(--panel);
+  padding: 1rem 1.1rem 0.4rem;
+  min-height: 8rem;
+}
+.output h2 {
+  font-size: 0.78rem;
+  font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  margin: 0 0 0.8rem;
+  color: var(--muted);
+  font-weight: 500;
+}
+dl.fields {
+  display: grid;
+  grid-template-columns: 11.5rem 1fr;
+  gap: 0.35rem 0.8rem;
+  margin: 0 0 1rem;
+}
+dl.fields dt {
+  font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+  font-size: 0.75rem;
+  color: var(--muted);
+  align-self: center;
+}
+dl.fields dd { margin: 0; font-size: 1.05rem; }
+dl.fields dd.empty { color: var(--rule); }
+.note { font-size: 0.85rem; color: var(--muted); }
+.zones { margin-top: 2rem; }
+.zones h2 { font-size: 1.05rem; margin: 0 0 0.35rem; }
+.zones p { margin: 0 0 0.8rem; color: var(--muted); font-size: 0.9rem; }
+.zones table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.85rem;
+  font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+  background: var(--panel);
+}
+.zones th, .zones td {
+  text-align: left;
+  padding: 0.35rem 0.5rem;
+  border-bottom: 1px solid var(--rule);
+}
+.zones th {
+  font-weight: 500;
+  color: var(--muted);
+  font-size: 0.72rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+.zones td:nth-child(2) { color: var(--ok); }
+footer { margin-top: 2.5rem; font-size: 0.82rem; color: var(--muted); }
+footer strong { color: var(--ink); font-weight: 600; }

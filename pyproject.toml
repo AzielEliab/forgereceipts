@@ -1,0 +1,72 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "forgereceipts"
+version = "0.1.0"
+description = "Local-first evidence integrity platform for pro se fathers in family court (ForgeReceipts, July 2026). Not legal advice."
+readme = "README.md"
+license = {file = "LICENSE"}
+authors = [{name = "Aziel Eliab"}]
+requires-python = ">=3.10"
+keywords = [
+    "evidence",
+    "receipts",
+    "hash-chain",
+    "family-court",
+    "pro-se",
+    "local-first",
+    "forensics",
+    "forks",
+]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "License :: OSI Approved :: Apache Software License",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Topic :: Security :: Cryptography",
+    "Intended Audience :: End Users/Desktop",
+]
+dependencies = []
+
+[project.optional-dependencies]
+dev = ["pytest>=7.4"]
+engines = ["numpy>=1.24", "scipy>=1.11", "cryptography>=42.0"]
+
+[project.scripts]
+forgereceipts = "forgereceipts.cli:main"
+
+[project.urls]
+Homepage = "https://github.com/AzielEliab/forgereceipts"
+Download = "https://forgereceipts-download-tracker.vibelock.workers.dev/"
+Issues = "https://github.com/AzielEliab/forgereceipts/issues"
+
+[tool.setuptools.packages.find]
+where = [".", "engines"]
+include = [
+    "forgereceipts*",
+    "temporallock*",
+    "vibelock*",
+    "veillock*",
+    "codelock*",
+    "godlock*",
+    "shadowlock*",
+    "miragegrid*",
+    "staticclock*",
+]
+exclude = ["tests*", "workers*", "docs*"]
+
+[tool.setuptools.package-data]
+forgereceipts = ["static/*"]
+staticclock = ["data/*.json", "web/*"]
+godlock = ["templates/*.html"]
+miragegrid = ["templates/*.html"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = [".", "engines"]
+addopts = "-q"

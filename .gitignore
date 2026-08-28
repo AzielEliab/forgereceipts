@@ -1,0 +1,11 @@
+.venv
+.forgereceipts
+dist
+*.egg-info
+__pycache__
+.pytest_cache
+node_modules
+.wrangler
+*.pyc
+.coverage
+htmlcov

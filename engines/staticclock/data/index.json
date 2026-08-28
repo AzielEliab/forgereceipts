@@ -1,0 +1,478 @@
+{
+  "version": "0.1.0",
+  "note": "v0.1 ships the Top-30 anchor set. A full 100+ language index is a replacement update, not a runtime fetch.",
+  "anchors": {
+    "United States": {
+      "iana": "America/New_York",
+      "language": "English",
+      "basket": [
+        "United States",
+        "Canada",
+        "Mexico",
+        "United Kingdom",
+        "Australia"
+      ]
+    },
+    "United Kingdom": {
+      "iana": "Europe/London",
+      "language": "English",
+      "basket": [
+        "United Kingdom",
+        "United States",
+        "Canada",
+        "Australia",
+        "Netherlands"
+      ]
+    },
+    "Germany": {
+      "iana": "Europe/Berlin",
+      "language": "German",
+      "basket": [
+        "Germany",
+        "France",
+        "Netherlands",
+        "Poland",
+        "Sweden"
+      ]
+    },
+    "France": {
+      "iana": "Europe/Paris",
+      "language": "French",
+      "basket": [
+        "France",
+        "Germany",
+        "Spain",
+        "Italy",
+        "United Kingdom"
+      ]
+    },
+    "Spain": {
+      "iana": "Europe/Madrid",
+      "language": "Spanish",
+      "basket": [
+        "Spain",
+        "France",
+        "Italy",
+        "Mexico",
+        "Argentina"
+      ]
+    },
+    "Italy": {
+      "iana": "Europe/Rome",
+      "language": "Italian",
+      "basket": [
+        "Italy",
+        "France",
+        "Spain",
+        "Germany",
+        "Poland"
+      ]
+    },
+    "Brazil": {
+      "iana": "America/Sao_Paulo",
+      "language": "Portuguese",
+      "basket": [
+        "Brazil",
+        "Argentina",
+        "Chile",
+        "Mexico",
+        "Spain"
+      ]
+    },
+    "Mexico": {
+      "iana": "America/Mexico_City",
+      "language": "Spanish",
+      "basket": [
+        "Mexico",
+        "United States",
+        "Spain",
+        "Argentina",
+        "Chile"
+      ]
+    },
+    "Canada": {
+      "iana": "America/Toronto",
+      "language": "English",
+      "basket": [
+        "Canada",
+        "United States",
+        "United Kingdom",
+        "Australia",
+        "France"
+      ]
+    },
+    "India": {
+      "iana": "Asia/Kolkata",
+      "language": "Hindi",
+      "basket": [
+        "India",
+        "United Kingdom",
+        "Australia",
+        "South Africa",
+        "United States"
+      ]
+    },
+    "China": {
+      "iana": "Asia/Shanghai",
+      "language": "Chinese",
+      "basket": [
+        "China",
+        "Japan",
+        "South Korea",
+        "India",
+        "Russia"
+      ]
+    },
+    "Japan": {
+      "iana": "Asia/Tokyo",
+      "language": "Japanese",
+      "basket": [
+        "Japan",
+        "South Korea",
+        "China",
+        "Australia",
+        "United States"
+      ]
+    },
+    "South Korea": {
+      "iana": "Asia/Seoul",
+      "language": "Korean",
+      "basket": [
+        "South Korea",
+        "Japan",
+        "China",
+        "Russia",
+        "United States"
+      ]
+    },
+    "Australia": {
+      "iana": "Australia/Sydney",
+      "language": "English",
+      "basket": [
+        "Australia",
+        "New Zealand",
+        "United Kingdom",
+        "United States",
+        "India"
+      ]
+    },
+    "New Zealand": {
+      "iana": "Pacific/Auckland",
+      "language": "English",
+      "basket": [
+        "New Zealand",
+        "Australia",
+        "United Kingdom",
+        "United States",
+        "Canada"
+      ]
+    },
+    "South Africa": {
+      "iana": "Africa/Johannesburg",
+      "language": "English",
+      "basket": [
+        "South Africa",
+        "Nigeria",
+        "United Kingdom",
+        "Australia",
+        "India"
+      ]
+    },
+    "Nigeria": {
+      "iana": "Africa/Lagos",
+      "language": "English",
+      "basket": [
+        "Nigeria",
+        "South Africa",
+        "United Kingdom",
+        "Egypt",
+        "United States"
+      ]
+    },
+    "Egypt": {
+      "iana": "Africa/Cairo",
+      "language": "Arabic",
+      "basket": [
+        "Egypt",
+        "Saudi Arabia",
+        "Israel",
+        "Turkey",
+        "Nigeria"
+      ]
+    },
+    "Israel": {
+      "iana": "Asia/Jerusalem",
+      "language": "Hebrew",
+      "basket": [
+        "Israel",
+        "Egypt",
+        "Turkey",
+        "Saudi Arabia",
+        "United Kingdom"
+      ]
+    },
+    "Turkey": {
+      "iana": "Europe/Istanbul",
+      "language": "Turkish",
+      "basket": [
+        "Turkey",
+        "Israel",
+        "Egypt",
+        "Russia",
+        "Germany"
+      ]
+    },
+    "Russia": {
+      "iana": "Europe/Moscow",
+      "language": "Russian",
+      "basket": [
+        "Russia",
+        "Ukraine",
+        "Poland",
+        "Finland",
+        "Turkey"
+      ]
+    },
+    "Ukraine": {
+      "iana": "Europe/Kyiv",
+      "language": "Ukrainian",
+      "basket": [
+        "Ukraine",
+        "Poland",
+        "Russia",
+        "Germany",
+        "Turkey"
+      ]
+    },
+    "Poland": {
+      "iana": "Europe/Warsaw",
+      "language": "Polish",
+      "basket": [
+        "Poland",
+        "Germany",
+        "Ukraine",
+        "Netherlands",
+        "Sweden"
+      ]
+    },
+    "Netherlands": {
+      "iana": "Europe/Amsterdam",
+      "language": "Dutch",
+      "basket": [
+        "Netherlands",
+        "Germany",
+        "United Kingdom",
+        "France",
+        "Sweden"
+      ]
+    },
+    "Sweden": {
+      "iana": "Europe/Stockholm",
+      "language": "Swedish",
+      "basket": [
+        "Sweden",
+        "Norway",
+        "Finland",
+        "Netherlands",
+        "Germany"
+      ]
+    },
+    "Norway": {
+      "iana": "Europe/Oslo",
+      "language": "Norwegian",
+      "basket": [
+        "Norway",
+        "Sweden",
+        "Finland",
+        "Netherlands",
+        "Germany"
+      ]
+    },
+    "Finland": {
+      "iana": "Europe/Helsinki",
+      "language": "Finnish",
+      "basket": [
+        "Finland",
+        "Sweden",
+        "Norway",
+        "Russia",
+        "Germany"
+      ]
+    },
+    "Argentina": {
+      "iana": "America/Argentina/Buenos_Aires",
+      "language": "Spanish",
+      "basket": [
+        "Argentina",
+        "Chile",
+        "Brazil",
+        "Spain",
+        "Mexico"
+      ]
+    },
+    "Chile": {
+      "iana": "America/Santiago",
+      "language": "Spanish",
+      "basket": [
+        "Chile",
+        "Argentina",
+        "Brazil",
+        "Spain",
+        "Mexico"
+      ]
+    },
+    "Saudi Arabia": {
+      "iana": "Asia/Riyadh",
+      "language": "Arabic",
+      "basket": [
+        "Saudi Arabia",
+        "Egypt",
+        "Israel",
+        "Turkey",
+        "India"
+      ]
+    }
+  },
+  "languages": {
+    "English": [
+      "UK Midlands",
+      "Northern Neutral",
+      "General American Neutral",
+      "Southern Hemisphere Neutral",
+      "West African Neutral"
+    ],
+    "Spanish": [
+      "Rioplatense Neutral",
+      "Mexican Neutral",
+      "Castilian Neutral",
+      "Andean Neutral",
+      "Caribbean Neutral"
+    ],
+    "German": [
+      "Standard High German Neutral",
+      "Austrian Neutral",
+      "Swiss High German Neutral",
+      "Northern Low Neutral",
+      "Bavarian Neutral"
+    ],
+    "French": [
+      "Metropolitan Neutral",
+      "Canadian Neutral",
+      "Belgian Neutral",
+      "Maghrebi Neutral",
+      "West African Neutral"
+    ],
+    "Italian": [
+      "Standard Italian Neutral",
+      "Northern Neutral",
+      "Southern Neutral",
+      "Tuscan Neutral",
+      "Roman Neutral"
+    ],
+    "Portuguese": [
+      "Brazilian Neutral",
+      "European Neutral",
+      "Carioca Neutral",
+      "Paulista Neutral",
+      "African Lusophone Neutral"
+    ],
+    "Hindi": [
+      "Standard Hindi Neutral",
+      "Khari Boli Neutral",
+      "Awadhi Neutral",
+      "Bhojpuri Neutral",
+      "Urban Neutral"
+    ],
+    "Chinese": [
+      "Mandarin Neutral",
+      "Northern Mandarin",
+      "Wu Neutral",
+      "Yue Neutral",
+      "Standard Putonghua"
+    ],
+    "Japanese": [
+      "Standard Tokyo Neutral",
+      "Kansai Neutral",
+      "Tohoku Neutral",
+      "Kyushu Neutral",
+      "Hokkaido Neutral"
+    ],
+    "Korean": [
+      "Seoul Neutral",
+      "Gyeongsang Neutral",
+      "Jeolla Neutral",
+      "Chungcheong Neutral",
+      "Standard Neutral"
+    ],
+    "Arabic": [
+      "Egyptian Neutral",
+      "Gulf Neutral",
+      "Levantine Neutral",
+      "Maghrebi Neutral",
+      "MSA Neutral"
+    ],
+    "Hebrew": [
+      "Modern Israeli Neutral",
+      "Jerusalem Neutral",
+      "Sephardi Neutral",
+      "Ashkenazi Neutral",
+      "Neutral Standard"
+    ],
+    "Turkish": [
+      "Istanbul Neutral",
+      "Anatolian Neutral",
+      "Aegean Neutral",
+      "Black Sea Neutral",
+      "Standard Neutral"
+    ],
+    "Russian": [
+      "Moscow Neutral",
+      "St Petersburg Neutral",
+      "Southern Neutral",
+      "Ural Neutral",
+      "Standard Neutral"
+    ],
+    "Ukrainian": [
+      "Kyiv Neutral",
+      "Western Neutral",
+      "Eastern Neutral",
+      "Southern Neutral",
+      "Standard Neutral"
+    ],
+    "Polish": [
+      "Warsaw Neutral",
+      "Lesser Poland Neutral",
+      "Greater Poland Neutral",
+      "Silesian Neutral",
+      "Standard Neutral"
+    ],
+    "Dutch": [
+      "Netherlands Neutral",
+      "Flemish Neutral",
+      "Randstad Neutral",
+      "Northern Neutral",
+      "Standard Neutral"
+    ],
+    "Swedish": [
+      "Standard Rikssvenska",
+      "Stockholm Neutral",
+      "Gothenburg Neutral",
+      "Finland-Swedish Neutral",
+      "Northern Neutral"
+    ],
+    "Norwegian": [
+      "Bokmal Neutral",
+      "Nynorsk Neutral",
+      "Eastern Neutral",
+      "Western Neutral",
+      "Northern Neutral"
+    ],
+    "Finnish": [
+      "Standard Helsinki Neutral",
+      "Western Neutral",
+      "Eastern Neutral",
+      "Northern Neutral",
+      "Standard Neutral"
+    ]
+  }
+}

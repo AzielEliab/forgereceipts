@@ -1,0 +1,10 @@
+{
+  "name": "ForgeReceipts",
+  "short_name": "ForgeReceipts",
+  "description": "Local-first evidence integrity. Not legal advice.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#0e1014",
+  "theme_color": "#c4a35a",
+  "lang": "en"
+}

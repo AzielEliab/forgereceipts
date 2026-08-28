@@ -1,0 +1,82 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>StaticClock — release advisory</title>
+  <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+  <header>
+    <div class="tag">StaticClock · v0.1.0 · loopback</div>
+    <h1>When should this be released so it is read, not reacted to?</h1>
+    <p class="lede">
+      Advisory only. Least-distorting window by timezone, language, and
+      dialect. Not a scheduler, not a targeting system, not analytics.
+      One moment; then forgotten. No memory of past advisories.
+    </p>
+  </header>
+  <hr class="rule">
+
+  <form id="advise-form" autocomplete="off">
+    <div class="row">
+      <label for="geo">
+        <span class="kicker">Last-known geo</span>
+        Free text (city, region, country). Not an identity.
+      </label>
+      <input id="geo" name="geo" type="text" placeholder="Indiana" spellcheck="false">
+    </div>
+    <div class="or">or</div>
+    <div class="row">
+      <label for="anchor">
+        <span class="kicker">Top-30 country</span>
+        Anchor dropdown. Polarize a five-region basket from this.
+      </label>
+      <select id="anchor" name="anchor">
+        <option value="">— choose an anchor —</option>
+      </select>
+    </div>
+    <button class="advise" type="submit" id="go">Advise</button>
+  </form>
+
+  <section class="output" aria-live="polite">
+    <h2>Advisory</h2>
+    <dl class="fields">
+      <dt>geo location chosen</dt>
+      <dd id="out-geo" class="empty">—</dd>
+      <dt>optimal time</dt>
+      <dd id="out-time" class="empty">—</dd>
+      <dt>optimal date</dt>
+      <dd id="out-date" class="empty">—</dd>
+      <dt>primary language</dt>
+      <dd id="out-lang" class="empty">—</dd>
+      <dt>dialect section</dt>
+      <dd id="out-dialect" class="empty">—</dd>
+    </dl>
+    <p class="note">Five fields. No scores, no confidence, no alternatives, no because.</p>
+  </section>
+
+  <section class="zones">
+    <h2>Timezone reference</h2>
+    <p>Read-only. Computed locally with IANA zoneinfo. Listing zones does not change the advisory.</p>
+    <table>
+      <thead>
+        <tr>
+          <th>Region</th>
+          <th>IANA</th>
+          <th>Local date</th>
+          <th>Local time</th>
+          <th>UTC</th>
+        </tr>
+      </thead>
+      <tbody id="zones-body"></tbody>
+    </table>
+  </section>
+
+  <footer>
+    <p><strong>It does not help messages travel farther. It helps them arrive intact.</strong></p>
+    <p>Apache-2.0 · Aziel Eliab · 2026 · Bound to 127.0.0.1 · Forks welcome and always allowed.</p>
+  </footer>
+  <script src="/app.js"></script>
+</body>
+</html>

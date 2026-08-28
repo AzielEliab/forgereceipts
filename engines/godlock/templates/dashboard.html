@@ -1,0 +1,90 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>GodLock</title>
+  <style>
+    :root { color-scheme: dark; }
+    body { font-family: Georgia, serif; margin: 0; background: #111; color: #e8e0d0; }
+    main { max-width: 46rem; margin: 0 auto; padding: 2rem 1.25rem 4rem; }
+    h1 { font-weight: 400; letter-spacing: 0.08em; }
+    .motto { font-style: italic; color: #c4b59a; }
+    .warn { border: 1px solid #8a5a2b; padding: 0.75rem 1rem; color: #f0d0a8; }
+    dl { display: grid; grid-template-columns: 11rem 1fr; gap: 0.35rem 1rem; }
+    dt { color: #9a8b74; }
+    form { margin: 1.5rem 0; }
+    textarea { width: 100%; min-height: 7rem; background: #1c1c1c; color: inherit; border: 1px solid #444; padding: 0.6rem; }
+    button { background: #3d2a16; color: #f3e6d0; border: 1px solid #8a5a2b; padding: 0.45rem 1rem; cursor: pointer; }
+    code, .id { font-family: ui-monospace, monospace; font-size: 0.85rem; }
+    ul { padding-left: 1.2rem; }
+    a { color: #d4b483; }
+    footer { margin-top: 2rem; font-size: 0.85rem; color: #8a8070; }
+  </style>
+</head>
+<body>
+<main>
+  <h1>GodLock</h1>
+  <p class="motto">{{ motto }}</p>
+  <p class="warn">
+    This process is the <strong>core + receipts engine</strong>.
+    It binds to <code>127.0.0.1</code> by default.
+    MirageGrid/Airlock are logical node names, not an anonymity network.
+    POST /merge has <strong>no auth</strong> because this is a localhost research tool.
+    Forks are welcome.
+  </p>
+
+  <h2>Public counters</h2>
+  <dl>
+    <dt>resilience counter</dt><dd>{{ counter }}</dd>
+    <dt>resilience score</dt><dd>{{ resilience_score }}</dd>
+    <dt>active rules</dt><dd>{{ rules }}</dd>
+    <dt>grid nodes</dt><dd>{{ grid_nodes }} logical</dd>
+  </dl>
+
+  <h2>Submit a counter-argument</h2>
+  <form method="post" action="/stress">
+    <textarea name="text" required placeholder="Record a stress test…"></textarea>
+    <p><button type="submit">Record</button></p>
+  </form>
+
+  {% if result %}
+  <h2>Last receipt</h2>
+  <p class="id">{{ result.receipt.id }}</p>
+  <p>ingress <code>{{ result.receipt.ingress_node }}</code> → egress <code>{{ result.receipt.egress_node }}</code></p>
+  <p>hash <code>{{ result.receipt.hash }}</code></p>
+  <p>Jeeves ({{ result.jeeves_analysis.model }}): {{ result.jeeves_analysis.suggested_hardening }}</p>
+  {% endif %}
+
+  <h2>Recent receipt ids</h2>
+  <ul>
+    {% for rid in recent_ids %}
+    <li class="id">{{ rid }}</li>
+    {% else %}
+    <li>none yet</li>
+    {% endfor %}
+  </ul>
+
+  <h2>Active rules</h2>
+  <ul>
+    {% for rule in rule_list %}
+    <li>{{ rule.hardening }} <span class="id">(from {{ rule.receipt_id }})</span></li>
+    {% else %}
+    <li>none merged yet</li>
+    {% endfor %}
+  </ul>
+
+  <form method="post" action="/merge">
+    <p>Admin merge (no auth on localhost)</p>
+    <p><input name="receipt_id" placeholder="receipt id" required style="width:100%;background:#1c1c1c;color:inherit;border:1px solid #444;padding:0.4rem;"></p>
+    <p><textarea name="hardening" placeholder="hardening text (blank = use Jeeves suggestion)"></textarea></p>
+    <p><button type="submit">Merge</button></p>
+  </form>
+
+  <footer>
+    Collin Horton / Aziel the Revealer of the Sealed · 12 July 2026 · Apache-2.0
+    · <a href="/stats">/stats</a> · <a href="/health">/health</a>
+  </footer>
+</main>
+</body>
+</html>
