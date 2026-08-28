@@ -266,9 +266,10 @@ export default {
       if (!assetRes.ok) {
         return json({ error: "asset not hosted", asset, status: assetRes.status }, 404);
       }
-      const headers = new Headers(assetRes.headers);
+      const headers = new Headers();
       headers.set("Content-Type", "application/gzip");
       headers.set("Content-Disposition", 'attachment; filename="' + asset.replaceAll('"', "") + '"');
+      headers.set("Cache-Control", "private, no-store");
       for (const [k, v] of Object.entries(corsHeaders())) headers.set(k, v);
       return new Response(assetRes.body, { status: 200, headers });
     }
