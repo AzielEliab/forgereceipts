@@ -49,4 +49,4 @@ Python 3.10+. Core is stdlib. pytest is the dev extra. No network.
 
 By submitting a change you agree it is licensed under Apache-2.0, the
 same license as the rest of the tree. Keep the copyright lines honest.
-Canonical author: Aziel Eliab (Collin Horton), Indianapolis.
+Canonical author: Aziel Eliab, Indianapolis.

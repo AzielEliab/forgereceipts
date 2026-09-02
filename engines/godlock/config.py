@@ -18,7 +18,7 @@ JEEVES_MODEL = "godlock-jeeves-heuristic-0.1"
 
 MOTTO = "GodLock does not argue. It records, analyzes, hardens, and grows."
 
-AUTHOR = "Collin Horton / Aziel the Revealer of the Sealed"
+AUTHOR = "Aziel Eliab"
 PAPER_DATE = "12 July 2026"
 LICENSE_ID = "Apache-2.0"
 

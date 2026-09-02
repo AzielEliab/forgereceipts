@@ -45,7 +45,7 @@ def _build_parser() -> argparse.ArgumentParser:
         prog="godlock",
         description=(
             "GodLock — ABAD stress-test and resilience engine "
-            "(Collin Horton / Aziel the Revealer of the Sealed, 12 July 2026). "
+            "(Aziel Eliab, 12 July 2026). "
             "Core + receipts. Not an anonymity network."
         ),
     )

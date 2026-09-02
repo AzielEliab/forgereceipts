@@ -1,6 +1,6 @@
 """ForgeReceipts: local-first evidence integrity for pro se fathers.
 
-July 2026. Author: Aziel Eliab (Collin Horton), Indianapolis.
+July 2026. Author: Aziel Eliab, Indianapolis.
 
 Child's Best Interests First. Integrity Over Narrative. Local Control. Always.
 

@@ -4,7 +4,7 @@
 
 Whitepaper v1.0 — July 2026
 
-Author: Aziel Eliab (Collin Horton)
+Author: Aziel Eliab
 Indianapolis, Indiana
 
 Empowering Documentation · Child-Focused Advocacy · Procedural Equity
@@ -12,7 +12,7 @@ Empowering Documentation · Child-Focused Advocacy · Procedural Equity
 **DISCLAIMER:** This document describes a documentation and organization
 tool. It is **not legal advice** and does not guarantee any court
 outcome. Family law varies by jurisdiction. Consult a licensed attorney
-in your state. Canonical author is Aziel Eliab (Collin Horton),
+in your state. Canonical author is Aziel Eliab,
 Indianapolis. Ignore any duplicate byline.
 
 ---
@@ -209,7 +209,7 @@ Child's Best Interests First. Integrity Over Narrative. Local Control. Always.
 
 Signed
 
-Aziel Eliab (Collin Horton)
+Aziel Eliab
 Indianapolis, Indiana
 July 2026
 

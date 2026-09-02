@@ -1,7 +1,7 @@
 """GodLock: stress-test and resilience engine for the ABAD framework.
 
-July 12 2026 whitepaper implementation by Collin Horton / Aziel the
-Revealer of the Sealed. Shipped under GitHub user AzielEliab.
+July 12 2026 whitepaper implementation by Aziel Eliab.
+Shipped under GitHub user AzielEliab.
 
 GodLock does not argue. It records, analyzes, hardens, and grows.
 
@@ -19,7 +19,7 @@ from godlock.lumen import decrypt_capsule, export_capsule
 from godlock.receipts import Receipt
 
 __version__ = "0.1.0"
-__author__ = "Collin Horton / Aziel Eliab"
+__author__ = "Aziel Eliab"
 __all__ = [
     "Airlock",
     "GodLockEngine",
