@@ -151,6 +151,8 @@ Child's Best Interests First. Integrity Over Narrative. Local Control. Always.
 
 ## Use with Grok, ChatGPT, Venice
 
+- Catalog OpenAPI: https://aziel-runtime.vibelock.workers.dev/openapi.json
+
 Live HTTPS runtime on the download-tracker Worker (does **not** increment the download counter):
 
 - OpenAPI 3.1: https://forgereceipts-download-tracker.vibelock.workers.dev/openapi.json

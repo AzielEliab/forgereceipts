@@ -56,3 +56,18 @@ Record: https://zenodo.org/records/21436074
 
 Counted download (gzip HTTP 200, no 302): https://forgereceipts-download-tracker.vibelock.workers.dev/download?asset=forgereceipts-0.2.0.tar.gz
 GitHub: https://github.com/AzielEliab/forgereceipts
+
+## Catalog + local UI
+
+Author: **Aziel Eliab**. Honest scope: Local receipt / checklist helper. Not legal advice. Does not contact courts.
+
+- Catalog product: https://aziel-runtime.vibelock.workers.dev/p/forgereceipts/
+- Catalog OpenAPI: https://aziel-runtime.vibelock.workers.dev/openapi.json
+- Catalog MCP: `POST https://aziel-runtime.vibelock.workers.dev/mcp`
+- This Worker skill: `GET https://forgereceipts-download-tracker.vibelock.workers.dev/v1/skill`
+- This Worker OpenAPI: https://forgereceipts-download-tracker.vibelock.workers.dev/openapi.json
+- Sample payload: `GET https://forgereceipts-download-tracker.vibelock.workers.dev/v1/example`
+
+Local UI: **Import JSON file** (`type=file`) and **Export JSON**. Then `forgereceipts doctor`.
+
+Grok: import catalog or Worker OpenAPI as a custom tool. ChatGPT: GPT Actions. Venice: HTTP tools.
