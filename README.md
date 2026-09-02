@@ -2,7 +2,7 @@
 
 Local-first evidence integrity platform for pro se fathers in family court.
 
-**Author:** Aziel Eliab (Collin Horton), Indianapolis
+**Author:** Aziel Eliab
 **Date:** July 2026
 **License:** [Apache-2.0](LICENSE)
 
@@ -15,6 +15,43 @@ Engine map: [docs/engines.md](docs/engines.md).
 How to contribute: [CONTRIBUTING.md](CONTRIBUTING.md).
 
 **Forks are welcome and always allowed.**
+
+
+## One-click install
+
+```bash
+curl -fsSL https://forgereceipts-download-tracker.vibelock.workers.dev/install.sh | bash
+```
+
+The script curls the **counted** tarball from this project's Worker
+(`/download`, User-Agent `Mozilla/5.0`), extracts, makes a venv, and
+`pip install -e .`. Then run `forgereceipts ui`.
+
+Or tap **Download** / **One-click install** on the Worker homepage
+(a 6th-grader can tap it):
+https://forgereceipts-download-tracker.vibelock.workers.dev/
+
+## Counted download (Cloudflare Worker)
+
+**This is the counted download.** GitHub releases exist as a mirror.
+The Worker serves the gzip itself (HTTP 200, no 302 to GitHub).
+
+# → [https://forgereceipts-download-tracker.vibelock.workers.dev/](https://forgereceipts-download-tracker.vibelock.workers.dev/) ←
+
+Direct tarball (also counted):
+[forgereceipts-0.2.0.tar.gz](https://forgereceipts-download-tracker.vibelock.workers.dev/download?asset=forgereceipts-0.2.0.tar.gz)
+
+- Live count JSON: [https://forgereceipts-download-tracker.vibelock.workers.dev/stats](https://forgereceipts-download-tracker.vibelock.workers.dev/stats)
+- OpenAPI: [https://forgereceipts-download-tracker.vibelock.workers.dev/openapi.json](https://forgereceipts-download-tracker.vibelock.workers.dev/openapi.json)
+- Skill: [https://forgereceipts-download-tracker.vibelock.workers.dev/v1/skill](https://forgereceipts-download-tracker.vibelock.workers.dev/v1/skill)
+- One-click install: [https://forgereceipts-download-tracker.vibelock.workers.dev/install.sh](https://forgereceipts-download-tracker.vibelock.workers.dev/install.sh)
+- GitHub: [https://github.com/AzielEliab/forgereceipts](https://github.com/AzielEliab/forgereceipts)
+
+- DOI: [10.5281/zenodo.21436074](https://doi.org/10.5281/zenodo.21436074)
+- Zenodo: [https://zenodo.org/records/21436074](https://zenodo.org/records/21436074)
+
+Isolated counter: Worker `forgereceipts-download-tracker`, KV `FORGERECEIPTS_DOWNLOADS`. Not mixed with any other product. `/v1` does not increment downloads.
+
 
 ## Quick start
 
