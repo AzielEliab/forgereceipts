@@ -1,8 +1,9 @@
 # ForgeReceipts — iPhone & Android
 
 Local-first Flutter client for ForgeReceipts. On-device list of
-receipts, add a note, **Not legal advice** banner, child's-best-interests
-motto. Offline. No analytics. **No court filing.**
+receipts, add a note, import/export receipt JSON, **Not legal advice** banner,
+child's-best-interests motto. Offline. No analytics. **No court filing.**
+A receipt is not legal proof.
 
 Application id: `com.azieeliab.forgereceipts`
 

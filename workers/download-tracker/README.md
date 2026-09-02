@@ -29,11 +29,11 @@ No secrets belong in this directory.
 |--------|------|----------|
 | GET | `/` | Index with live count and download button (`${n} counted`) |
 | GET | `/count` | `{ project, total }` |
-| GET | `/download?asset=` | Increment KV, 302 to hosted asset or GitHub |
+| GET | `/download?asset=` | Increment KV, **200 gzip** of the hosted tarball |
 | GET | `/stats` | JSON totals |
 | POST | `/event` | A fork reports a download |
 
-Default asset: `forgereceipts-0.1.0.tar.gz`
+Default asset: `forgereceipts-0.2.0.tar.gz`
 GitHub: `https://github.com/AzielEliab/forgereceipts`
 
 ## Use with Grok, ChatGPT, Venice

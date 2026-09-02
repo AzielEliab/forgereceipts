@@ -13,11 +13,24 @@ from typing import Any
 from urllib.parse import parse_qs, urlparse
 
 from forgereceipts import __version__
+from forgereceipts.debug import debug_enabled, debug_log
+from forgereceipts.demo import SAMPLE_NAME, sample_sha256, write_sample
+from forgereceipts.exchange import (
+    SAVED_PLAIN,
+    dump_bundle,
+    dump_receipt,
+    load_receipts_from_text,
+    verify_payload,
+    verify_text,
+    parse_payload,
+)
 from forgereceipts.filing import render_html, render_txt, templates as filing_templates
 from forgereceipts.forensics import reverify_bytes, reverify_path, sha256_bytes, sha256_path
 from forgereceipts.legal import NOT_LEGAL_ADVICE, reference as legal_reference
+from forgereceipts.limits import MAX_BODY, MAX_FILE_BYTES
 from forgereceipts.lock import SessionLock
 from forgereceipts.paths import data_dir as resolve_data_dir
+from forgereceipts.plain import NOT_LEGAL_PROOF, TOO_BIG, PlainError, parse_json_bytes
 from forgereceipts.score import pattern_strength
 from forgereceipts.store import ForgeStore, verify_jsonl
 from forgereceipts.tools import availability as tools_availability, run as tools_run
@@ -25,7 +38,6 @@ from forgereceipts.tools import availability as tools_availability, run as tools
 DEFAULT_HOST = "127.0.0.1"
 DEFAULT_PORT = 8787
 STATIC_DIR = Path(__file__).resolve().parent / "static"
-MAX_BODY = 12 * 1024 * 1024
 
 _STATE = threading.local()
 
@@ -51,7 +63,7 @@ def reset_state() -> None:
 
 
 class ForgeHandler(BaseHTTPRequestHandler):
-    server_version = "ForgeReceipts/0.1.0"
+    server_version = "ForgeReceipts/0.2.0"
 
     @property
     def data_dir(self) -> Path:
@@ -59,7 +71,10 @@ class ForgeHandler(BaseHTTPRequestHandler):
 
     def log_message(self, fmt: str, *args: object) -> None:
         sys_stderr = __import__("sys").stderr
-        sys_stderr.write("127.0.0.1 local %s\n" % (fmt % args))
+        line = "127.0.0.1 local %s" % (fmt % args)
+        sys_stderr.write(line + "\n")
+        if debug_enabled():
+            debug_log(line)
 
     def _state(self) -> dict[str, Any]:
         return _app_state(self.data_dir)
@@ -80,17 +95,22 @@ class ForgeHandler(BaseHTTPRequestHandler):
         raw = json.dumps(payload, indent=2, ensure_ascii=False).encode("utf-8") + b"\n"
         self._send(status, raw, "application/json; charset=utf-8")
 
+    def _plain_error(self, exc: BaseException, status: int = 400) -> None:
+        payload: dict[str, Any] = {
+            "error": str(exc),
+            "plain": True,
+            "disclaimer": NOT_LEGAL_PROOF,
+        }
+        if debug_enabled():
+            payload["debug_type"] = type(exc).__name__
+        self._json(payload, status)
+
     def _read_json(self) -> dict[str, Any]:
         length = int(self.headers.get("Content-Length") or "0")
         if length > MAX_BODY:
-            raise ValueError("body too large")
+            raise PlainError(TOO_BIG)
         raw = self.rfile.read(length) if length else b"{}"
-        if not raw:
-            return {}
-        data = json.loads(raw.decode("utf-8"))
-        if not isinstance(data, dict):
-            raise ValueError("JSON object required")
-        return data
+        return parse_json_bytes(raw)
 
     def _spa(self) -> None:
         index = STATIC_DIR / "index.html"
@@ -153,6 +173,10 @@ class ForgeHandler(BaseHTTPRequestHandler):
             "/tools",
             "/verify",
             "/lock",
+            "/receipts",
+            "/import",
+            "/export",
+            "/demo",
         }:
             self._spa()
             return
@@ -163,8 +187,11 @@ class ForgeHandler(BaseHTTPRequestHandler):
                 return
             try:
                 self._api_get(path, qs)
+            except PlainError as exc:
+                self._plain_error(exc, 400)
             except Exception as exc:  # noqa: BLE001
-                self._json({"error": str(exc)}, 400)
+                debug_log(f"GET {path} {type(exc).__name__}: {exc}")
+                self._plain_error(exc, 400)
             return
 
         self._spa()
@@ -181,8 +208,11 @@ class ForgeHandler(BaseHTTPRequestHandler):
         try:
             body = self._read_json()
             self._api_post(path, body)
+        except PlainError as exc:
+            self._plain_error(exc, 400)
         except Exception as exc:  # noqa: BLE001
-            self._json({"error": str(exc)}, 400)
+            debug_log(f"POST {path} {type(exc).__name__}: {exc}")
+            self._plain_error(exc, 400)
 
     def _api_get(self, path: str, qs: dict[str, list[str]]) -> None:
         state = self._state()
@@ -202,6 +232,10 @@ class ForgeHandler(BaseHTTPRequestHandler):
                     "telemetry": False,
                     "accounts": False,
                     "not_legal_advice": True,
+                    "not_legal_proof": True,
+                    "disclaimer": NOT_LEGAL_PROOF,
+                    "debug": debug_enabled(),
+                    "max_file_bytes": MAX_FILE_BYTES,
                     "download": "https://forgereceipts-download-tracker.vibelock.workers.dev/",
                     "one_counter": True,
                     "lock": lock.status(),
@@ -216,6 +250,29 @@ class ForgeHandler(BaseHTTPRequestHandler):
             kind = (qs.get("kind") or [None])[0]
             rows = store.records_of(kind) if kind else store.records()
             self._json({"receipts": rows, "length": len(store), "verify": _verify_dict(store)})
+            return
+        if path.startswith("/api/receipts/"):
+            digest = path.rsplit("/", 1)[-1]
+            row = store.get_by_hash(digest)
+            if row is None:
+                self._json({"error": "No receipt with that hash on this computer.", "plain": True}, 404)
+                return
+            self._json({"receipt": row, "plain": _plain_for(row), "disclaimer": NOT_LEGAL_PROOF})
+            return
+        if path == "/api/doctor":
+            from forgereceipts.doctor import run_doctor
+
+            self._json(run_doctor(self.data_dir))
+            return
+        if path == "/api/demo":
+            self._json(
+                {
+                    "name": SAMPLE_NAME,
+                    "sha256": sample_sha256(),
+                    "plain": "Tap Try a sample to save a practice receipt.",
+                    "disclaimer": NOT_LEGAL_PROOF,
+                }
+            )
             return
         if path == "/api/score":
             self._json(pattern_strength(store.records()))
@@ -289,7 +346,17 @@ class ForgeHandler(BaseHTTPRequestHandler):
                 file_name=name,
                 child_impact=impact,
             )
-            self._json({"sha256": digest, "file_name": name, "receipt": row})
+            self._json(
+                {
+                    "sha256": digest,
+                    "file_name": name,
+                    "receipt": row,
+                    "plain": SAVED_PLAIN,
+                    "hash": row.get("hash"),
+                    "disclaimer": NOT_LEGAL_PROOF,
+                    "not_legal_proof": True,
+                }
+            )
             return
         if path == "/api/forensics/verify":
             expected = str(body.get("expected") or body.get("file_sha256") or "")
@@ -318,6 +385,98 @@ class ForgeHandler(BaseHTTPRequestHandler):
             dest.write_text(content, encoding="utf-8")
             self._json({"path": str(dest), "format": ext, "content": content, "disclaimer": NOT_LEGAL_ADVICE})
             return
+        if path == "/api/receipt/export":
+            digest = str(body.get("hash") or body.get("id") or "").strip()
+            if digest:
+                row = store.get_by_hash(digest)
+                if row is None:
+                    raise PlainError("No receipt with that hash on this computer.")
+                text_out = dump_receipt(row)
+                dest = self.data_dir / "exports"
+                dest.mkdir(parents=True, exist_ok=True)
+                out = dest / f"{row['hash']}.json"
+                out.write_text(text_out, encoding="utf-8")
+                self._json(
+                    {
+                        "path": str(out),
+                        "filename": out.name,
+                        "content": text_out,
+                        "receipt": row,
+                        "plain": "Copied this receipt into a file you can keep.",
+                        "disclaimer": NOT_LEGAL_PROOF,
+                    }
+                )
+                return
+            rows = store.records()
+            if not rows:
+                raise PlainError("There is no receipt to export yet. Add a file or try a sample first.")
+            text_out = dump_bundle(rows) if len(rows) > 1 else dump_receipt(rows[-1])
+            dest = self.data_dir / "exports"
+            dest.mkdir(parents=True, exist_ok=True)
+            name = "receipts.json" if len(rows) > 1 else f"{rows[-1]['hash']}.json"
+            out = dest / name
+            out.write_text(text_out, encoding="utf-8")
+            self._json(
+                {
+                    "path": str(out),
+                    "filename": name,
+                    "content": text_out,
+                    "count": len(rows),
+                    "plain": "Copied your receipt(s) into a file you can keep.",
+                    "disclaimer": NOT_LEGAL_PROOF,
+                }
+            )
+            return
+        if path == "/api/receipt/import":
+            raw_text = str(body.get("json") or body.get("text") or "")
+            if not raw_text.strip():
+                raise PlainError("Paste a receipt file to import.")
+            payload = parse_payload(raw_text)
+            checked = verify_payload(payload)
+            if not checked.get("ok"):
+                self._json({**checked, "imported": False}, 400)
+                return
+            imported = []
+            for rec in payload["receipts"]:
+                row = store.append_import(rec)
+                imported.append(row)
+            last = imported[-1]
+            self._json(
+                {
+                    "ok": True,
+                    "verdict": "PASS",
+                    "plain": "Imported a receipt. The hash matches. A receipt is not legal proof.",
+                    "disclaimer": NOT_LEGAL_PROOF,
+                    "receipt": last,
+                    "imported": imported,
+                    "count": len(imported),
+                    "verify": checked,
+                }
+            )
+            return
+        if path == "/api/demo":
+            sample_path = write_sample(self.data_dir)
+            digest = sample_sha256()
+            row = store.append_forensics(
+                summary="sample demo file",
+                file_sha256=digest,
+                file_name=SAMPLE_NAME,
+                child_impact="Sample only so you can see a receipt. A receipt is not legal proof.",
+            )
+            self._json(
+                {
+                    "sha256": digest,
+                    "file_name": SAMPLE_NAME,
+                    "path": str(sample_path),
+                    "receipt": row,
+                    "plain": SAVED_PLAIN,
+                    "hash": row.get("hash"),
+                    "disclaimer": NOT_LEGAL_PROOF,
+                    "not_legal_proof": True,
+                    "sample": True,
+                }
+            )
+            return
         if path.startswith("/api/tools/"):
             name = path.rsplit("/", 1)[-1]
             self._json(tools_run(name, body))
@@ -327,13 +486,28 @@ class ForgeHandler(BaseHTTPRequestHandler):
 
 def _hash_from_body(body: dict[str, Any]) -> tuple[str, str]:
     if body.get("content_b64"):
-        data = base64.b64decode(body["content_b64"])
+        try:
+            data = base64.b64decode(body["content_b64"], validate=False)
+        except Exception as exc:  # noqa: BLE001
+            raise PlainError("That file could not be read. Try another file.") from exc
+        if len(data) > MAX_FILE_BYTES:
+            raise PlainError(TOO_BIG)
         name = str(body.get("file_name") or "upload.bin")
         return sha256_bytes(data), name
     if body.get("path"):
         path = str(body["path"])
+        p = Path(path)
+        if p.is_file() and p.stat().st_size > MAX_FILE_BYTES:
+            raise PlainError(TOO_BIG)
         return sha256_path(path), os.path.basename(path)
-    raise ValueError("content_b64 or path required")
+    raise PlainError("Pick a file first.")
+
+
+def _plain_for(row: dict[str, Any]) -> str:
+    name = row.get("file_name")
+    if name:
+        return f"{SAVED_PLAIN} ({name})"
+    return SAVED_PLAIN
 
 
 def _verify_dict(store: ForgeStore) -> dict[str, Any]:

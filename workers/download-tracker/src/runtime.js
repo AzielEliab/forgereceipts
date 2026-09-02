@@ -74,7 +74,7 @@ function aiHowTo(base) {
 }
 
 const PRODUCT = "forgereceipts";
-const VERSION = "0.1.0";
+const VERSION = "0.2.0";
 const BASE = "https://forgereceipts-download-tracker.vibelock.workers.dev";
 const BANNER = "Not legal advice. No court filing.";
 const MOTTO = "Child's Best Interests First. Integrity Over Narrative. Local Control. Always.";

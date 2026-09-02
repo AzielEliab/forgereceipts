@@ -21,6 +21,6 @@ if _ENGINES.is_dir():
     if _engine_str not in sys.path:
         sys.path.insert(0, _engine_str)
 
-__version__ = "0.1.0"
+__version__ = "0.2.0"
 __author__ = "Aziel Eliab"
 __all__ = ["__version__"]

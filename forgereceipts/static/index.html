@@ -9,7 +9,7 @@
 <link rel="stylesheet" href="/static/style.css">
 </head>
 <body>
-<div class="disclaimer-banner">Not Legal Advice — does not contact courts, Odyssey, or the cloud</div>
+<div class="disclaimer-banner">Not Legal Advice — a receipt is not legal proof — does not contact courts, Odyssey, or the cloud</div>
 <header class="app">
   <div class="brand">
     <h1>ForgeReceipts</h1>
@@ -19,26 +19,58 @@
 </header>
 <nav class="modes" id="nav">
   <button data-mode="home" class="active">Home</button>
-  <button data-mode="incident">Incident log</button>
-  <button data-mode="forensics">Forensics</button>
-  <button data-mode="journal">Time with Child</button>
-  <button data-mode="filing">Filing assistant</button>
-  <button data-mode="tools">Tools</button>
+  <button data-mode="receipts">Receipts</button>
+  <button data-mode="incident" data-advanced="1">Incident log</button>
+  <button data-mode="forensics" data-advanced="1">Forensics</button>
+  <button data-mode="journal" data-advanced="1">Time with Child</button>
+  <button data-mode="filing" data-advanced="1">Filing assistant</button>
+  <button data-mode="tools" data-advanced="1">Tools</button>
   <button data-mode="verify">Verify</button>
-  <button data-mode="lock">Lock</button>
+  <button data-mode="lock" data-advanced="1">Lock</button>
 </nav>
 <main id="app">
   <section class="card" data-panel="home">
     <h2>Home</h2>
-    <p><strong>Not Legal Advice.</strong> ForgeReceipts is a local documentation tool. It does not practice law, file anything, or guarantee any court outcome. Consult a licensed attorney.</p>
-    <p class="help">This is one software product. TemporalLock is the ledger. The other *Lock engines appear as optional Tools panels. One download counter for the whole product.</p>
-    <div class="card" style="margin-top:1rem">
+    <p><strong>Not Legal Advice.</strong> A receipt is not legal proof. ForgeReceipts saves a hash of a file on this computer. It does not practice law, file anything, or talk to a court.</p>
+    <div class="view-toggle" id="view-toggle">
+      <button type="button" data-view="simple" class="active">Simple</button>
+      <button type="button" data-view="advanced">Advanced</button>
+    </div>
+    <div class="giant-grid">
+      <button class="giant" id="btn-add-file" type="button">Add file</button>
+      <button class="giant ghost-giant" id="btn-import" type="button">Import receipt</button>
+      <button class="giant ghost-giant" id="btn-export" type="button">Export receipt</button>
+    </div>
+    <input id="add-file-input" class="hidden" type="file">
+    <input id="import-file-input" class="hidden" type="file" accept=".json,.jsonl,application/json,text/plain">
+    <div class="row">
+      <button class="act" id="btn-demo" type="button">Try a sample</button>
+    </div>
+    <p class="help">Add file keeps a receipt for that file. Import receipt reads a receipt you already saved. Export receipt copies a receipt to a file. Try a sample if you just want to see how it looks.</p>
+    <div id="saved-box" class="saved-banner hidden" role="status">
+      <p class="saved-title">Saved a receipt for this file</p>
+      <p class="hash" id="saved-hash"></p>
+      <p class="muted" id="saved-note"></p>
+    </div>
+    <p class="error" id="home-err"></p>
+    <h2>Receipts</h2>
+    <p class="help">List view. Tap one to open the detail view.</p>
+    <div id="home-list"></div>
+    <div id="home-detail" class="detail hidden"></div>
+    <div class="card advanced-only" style="margin-top:1rem">
       <div class="score" id="pss">—</div>
       <p class="muted">Pattern Strength Score (local heuristic, not a win probability)</p>
       <div class="bar"><span id="pss-bar" style="width:0%"></span></div>
       <p class="muted" id="pss-note"></p>
     </div>
-    <div id="legal-box"></div>
+    <div id="legal-box" class="advanced-only"></div>
+  </section>
+
+  <section class="card hidden" data-panel="receipts">
+    <h2>Receipts</h2>
+    <p class="help">List and detail. Simple shows the name and the hash. Advanced shows every field.</p>
+    <div id="rec-list"></div>
+    <div id="rec-detail" class="detail hidden"></div>
   </section>
 
   <section class="card hidden" data-panel="incident">
@@ -166,8 +198,8 @@
 
   <section class="card hidden" data-panel="verify">
     <h2>Verify</h2>
-    <p class="help">Load a chain JSONL and show PASS or FAIL. Hashes and links only — not a truth score.</p>
-    <textarea id="v-jsonl" placeholder="paste JSONL"></textarea>
+    <p class="help">Load a chain JSONL or a receipt JSON and show PASS or FAIL. Hashes and links only — not a truth score. A receipt is not legal proof.</p>
+    <textarea id="v-jsonl" placeholder="paste JSON or JSONL"></textarea>
     <div class="row">
       <button class="act" id="v-run">Verify pasted</button>
       <button class="ghost" id="v-local">Verify local chain</button>
@@ -199,7 +231,7 @@
   </div>
 </div>
 <footer>
-  Aziel Eliab (Collin Horton), Indianapolis, July 2026 · Apache-2.0 ·
+  Aziel Eliab (Collin Horton), Indianapolis · Apache-2.0 ·
   Forks welcome ·
   <a href="https://forgereceipts-download-tracker.vibelock.workers.dev/">Counted download (the only counter for this product)</a>
   · <a href="https://github.com/AzielEliab/forgereceipts">GitHub</a>

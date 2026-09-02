@@ -44,6 +44,11 @@ Core capabilities in v0.1.0:
 - Tools panels that import the other engines when present
 - Progressive-web-app-style UI on **127.0.0.1 only**, no CDN, no telemetry, no accounts
 
+v0.2.0 adds giant Add file / Import receipt / Export receipt, list + detail views,
+simple/advanced, `forgereceipts doctor`, `forgereceipts verify-receipt`,
+plain errors on bad JSON, size limits, `FORGERECEIPTS_DEBUG=1`, and a sample demo.
+A receipt is not legal proof.
+
 All data remains on the user's device. The platform addresses the
 documentation gap, knowledge gap, and credibility gap that
 disadvantage self-represented parents, so fathers can produce

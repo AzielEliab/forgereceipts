@@ -10,9 +10,10 @@ from __future__ import annotations
 from typing import Any
 
 NOT_LEGAL_ADVICE = (
-    "Not legal advice. This software does not practice law, does not "
-    "guarantee any outcome, and does not contact any court. Consult a "
-    "licensed attorney in your jurisdiction. Read the primary sources."
+    "Not legal advice. A receipt is not legal proof. This software does "
+    "not practice law, does not guarantee any outcome, and does not "
+    "contact any court. Consult a licensed attorney in your jurisdiction. "
+    "Read the primary sources."
 )
 
 NATIONAL_BASELINE: list[dict[str, str]] = [
@@ -89,7 +90,7 @@ def reference(jurisdiction: str = "IN") -> dict[str, Any]:
         "jurisdiction": match,
         "baseline": list(NATIONAL_BASELINE),
         "note": (
-            "State-aware in v0.1.0 means a selector label plus this stub. "
+            "State-aware in v0.2.0 means a selector label plus this stub. "
             "It does not encode your state's best-interest factors or "
             "parenting-time guidelines."
         ),

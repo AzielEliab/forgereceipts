@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "forgereceipts"
-version = "0.1.0"
+version = "0.2.0"
 description = "Local-first evidence integrity platform for pro se fathers in family court (ForgeReceipts, July 2026). Not legal advice."
 readme = "README.md"
 license = {file = "LICENSE"}

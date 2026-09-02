@@ -24,6 +24,7 @@ CORE_KEYS = ("timestamp", "summary", "evidence", "confidence", "prev_hash", "has
 KIND_INCIDENT = "incident"
 KIND_JOURNAL = "journal"
 KIND_FORENSICS = "forensics"
+KIND_IMPORT = "import"
 
 
 def compose_evidence(
@@ -87,6 +88,68 @@ class ForgeStore:
 
     def records_of(self, kind: str) -> list[dict[str, Any]]:
         return [r for r in self.records() if r.get("kind") == kind]
+
+    def get_by_hash(self, digest: str) -> dict[str, Any] | None:
+        want = (digest or "").strip().lower()
+        if not want:
+            return None
+        for row in self.records():
+            if str(row.get("hash") or "").lower() == want:
+                return row
+        return None
+
+    def save_import_file(self, receipt: dict[str, Any]) -> Path:
+        from forgereceipts.exchange import dump_receipt
+
+        digest = str(receipt.get("hash") or "").strip().lower()
+        if len(digest) != 64:
+            raise ValueError("imported receipt needs a 64-character hash")
+        dest_dir = self.data_dir / "imports"
+        dest_dir.mkdir(parents=True, exist_ok=True)
+        dest = dest_dir / f"{digest}.json"
+        dest.write_text(dump_receipt(receipt), encoding="utf-8")
+        return dest
+
+    def append_import(
+        self,
+        source: dict[str, Any],
+        *,
+        timestamp: str | None = None,
+    ) -> dict[str, Any]:
+        from forgereceipts.exchange import verify_one
+        from forgereceipts.plain import PlainError
+
+        checked = verify_one(source)
+        if not checked.get("ok"):
+            raise PlainError(str(checked.get("plain") or "This receipt does not match its hash."))
+        digest = str(source.get("hash") or checked.get("hash") or "")
+        self.save_import_file(source)
+        name = str(source.get("file_name") or source.get("summary") or "receipt.json")
+        child_impact = (
+            "Imported a local copy of a receipt. A receipt is not legal proof."
+        )
+        composed = compose_evidence(
+            f"Imported receipt hash {digest}",
+            kind=KIND_IMPORT,
+            child_impact=child_impact,
+            file_sha256=digest,
+            file_name=name,
+        )
+        extra: dict[str, Any] = {
+            "kind": KIND_IMPORT,
+            "child_impact": child_impact,
+            "imported": True,
+            "imported_hash": digest,
+            "file_sha256": digest,
+            "file_name": name,
+        }
+        return self.append(
+            summary=str(source.get("summary") or f"Imported receipt {digest[:12]}"),
+            evidence=composed,
+            confidence=1.0,
+            timestamp=timestamp,
+            extra=extra,
+        )
 
     def append(
         self,

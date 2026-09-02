@@ -14,7 +14,7 @@ import { handleRuntime } from "./runtime.js";
  */
 
 const PROJECT = "forgereceipts";
-const DEFAULT_ASSET = "forgereceipts-0.1.0.tar.gz";
+const DEFAULT_ASSET = "forgereceipts-0.2.0.tar.gz";
 const DEFAULT_OWNER = "AzielEliab";
 const DEFAULT_REPO = "forgereceipts";
 const DEFAULT_BRANCH = "main";
@@ -192,7 +192,7 @@ async function indexHtml(env) {
   <p class="motto">Child's Best Interests First. Integrity Over Narrative. Local Control. Always.</p>
   <div class="card">
     <p class="count">${n}<span> downloads of this project</span></p>
-    <a class="dl" href="/download?asset=forgereceipts-0.1.0.tar.gz">Download forgereceipts-0.1.0.tar.gz — ${n} counted</a>
+    <a class="dl" href="/download?asset=forgereceipts-0.2.0.tar.gz">Download forgereceipts-0.2.0.tar.gz — ${n} counted</a>
     <p class="meta">The count ticks on this click. Nobody reports anything. Forks using this same link are counted automatically.</p>
     <p class="iso">This is the ONLY download counter for the whole ForgeReceipts product. Worker <code>forgereceipts-download-tracker</code>, project <code>forgereceipts</code>. Engines inside the tree are not counted separately.</p>
     <p class="meta"><a href="/stats">JSON stats</a> · <a href="/v1/health">runtime /v1/health</a> · <a href="/openapi.json">OpenAPI</a> · <a href="/ai">Use with Grok, ChatGPT, Venice</a> · <a href="${github}">GitHub releases</a></p>
@@ -252,7 +252,7 @@ export default {
     if (url.pathname === "/go" && request.method === "GET") {
       const dims = parseDims(url.searchParams);
       await increment(env, dims);
-      const asset = dims.asset || "forgereceipts-0.1.0.tar.gz";
+      const asset = dims.asset || "forgereceipts-0.2.0.tar.gz";
       return redirect(githubAssetUrl(dims.owner, dims.repo, dims.tag, asset));
     }
 
@@ -261,7 +261,7 @@ export default {
       if (!dims.asset && url.pathname.startsWith("/download/")) {
         dims.asset = decodeURIComponent(url.pathname.slice("/download/".length));
       }
-      const asset = dims.asset || "forgereceipts-0.1.0.tar.gz";
+      const asset = dims.asset || "forgereceipts-0.2.0.tar.gz";
       dims.asset = asset;
       await increment(env, dims);
       if (!env.ASSETS) {

@@ -2,6 +2,10 @@
 (function () {
   const $ = (sel) => document.querySelector(sel);
   const $$ = (sel) => Array.from(document.querySelectorAll(sel));
+  const MAX_FILE = 12 * 1024 * 1024;
+  let selectedHash = null;
+  let lastReceipts = [];
+  let viewMode = localStorage.getItem("forgereceipts.view") || "simple";
 
   async function api(path, opts) {
     const res = await fetch(path, opts);
@@ -12,27 +16,98 @@
     return data;
   }
 
+  function applyView() {
+    document.body.classList.toggle("simple", viewMode === "simple");
+    document.body.classList.toggle("advanced", viewMode === "advanced");
+    $$("#view-toggle button").forEach((b) => b.classList.toggle("active", b.dataset.view === viewMode));
+    localStorage.setItem("forgereceipts.view", viewMode);
+  }
+
   function show(mode) {
     $$("[data-panel]").forEach((el) => el.classList.toggle("hidden", el.getAttribute("data-panel") !== mode));
     $$("#nav button").forEach((b) => b.classList.toggle("active", b.dataset.mode === mode));
     history.replaceState(null, "", "#" + mode);
   }
 
+  function escapeHtml(s) {
+    return String(s).replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+  }
+
   function receiptCard(r) {
     const div = document.createElement("div");
-    div.className = "receipt";
+    div.className = "receipt" + (r.hash && r.hash === selectedHash ? " active" : "");
+    div.dataset.hash = r.hash || "";
     const impact = r.child_impact ? `<div><em>Child impact:</em> ${escapeHtml(r.child_impact)}</div>` : "";
     const priv = r.private_note ? `<div><em>Private note:</em> ${escapeHtml(r.private_note)}</div>` : "";
     const file = r.file_sha256 ? `<div class="hash">file ${escapeHtml(r.file_name || "")} ${escapeHtml(r.file_sha256)}</div>` : "";
-    div.innerHTML = `<strong>${escapeHtml(r.summary || "")}</strong>
-      <div class="muted">${escapeHtml(r.timestamp || "")} · ${escapeHtml(r.kind || "")} · conf ${r.confidence}</div>
-      ${impact}${priv}${file}
-      <div class="hash">${escapeHtml(r.hash || "")}</div>`;
+    const extra = viewMode === "advanced"
+      ? `${impact}${priv}${file}<div class="hash">${escapeHtml(r.hash || "")}</div>`
+      : `<div class="hash">${escapeHtml(r.hash || "")}</div>`;
+    div.innerHTML = `<strong>${escapeHtml(r.summary || r.file_name || "Receipt")}</strong>
+      <div class="muted">${escapeHtml(r.timestamp || "")} · ${escapeHtml(r.kind || "")}</div>
+      ${extra}`;
+    div.addEventListener("click", () => {
+      selectedHash = r.hash;
+      renderDetail(r);
+      $$(".receipt").forEach((el) => el.classList.toggle("active", el.dataset.hash === selectedHash));
+    });
     return div;
   }
 
-  function escapeHtml(s) {
-    return String(s).replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+  function renderDetail(r) {
+    const simple = `<p><strong>${escapeHtml(r.summary || r.file_name || "Receipt")}</strong></p>
+      <p>This is the saved receipt for this file.</p>
+      <p class="hash">${escapeHtml(r.hash || "")}</p>
+      <p class="muted">Not legal advice. A receipt is not legal proof.</p>`;
+    const advanced = `<p><strong>${escapeHtml(r.summary || "")}</strong></p>
+      <div class="muted">${escapeHtml(r.timestamp || "")} · ${escapeHtml(r.kind || "")} · conf ${r.confidence}</div>
+      ${r.child_impact ? `<p><em>Child impact:</em> ${escapeHtml(r.child_impact)}</p>` : ""}
+      ${r.file_sha256 ? `<p class="hash">file ${escapeHtml(r.file_name || "")}<br>${escapeHtml(r.file_sha256)}</p>` : ""}
+      <p class="hash">hash ${escapeHtml(r.hash || "")}</p>
+      <p class="hash">prev ${escapeHtml(r.prev_hash || "")}</p>
+      <pre class="out">${escapeHtml(JSON.stringify(r, null, 2))}</pre>
+      <p class="muted">Not legal advice. A receipt is not legal proof.</p>`;
+    const html = viewMode === "advanced" ? advanced : simple;
+    ["#home-detail", "#rec-detail"].forEach((sel) => {
+      const el = $(sel);
+      if (!el) return;
+      el.innerHTML = html;
+      el.classList.remove("hidden");
+    });
+  }
+
+  function showSaved(data) {
+    const box = $("#saved-box");
+    box.classList.remove("hidden");
+    $("#saved-hash").textContent = data.sha256 || data.hash || (data.receipt && data.receipt.hash) || "";
+    $("#saved-note").textContent = (data.plain || "Saved a receipt for this file") + "  Not legal advice. A receipt is not legal proof.";
+    $("#home-err").textContent = "";
+  }
+
+  function fileToB64(file) {
+    return new Promise((resolve, reject) => {
+      if (file.size > MAX_FILE) {
+        reject(new Error("That file is too big. ForgeReceipts only takes files up to 12 MB."));
+        return;
+      }
+      const reader = new FileReader();
+      reader.onload = () => {
+        const s = String(reader.result || "");
+        const i = s.indexOf(",");
+        resolve(i >= 0 ? s.slice(i + 1) : s);
+      };
+      reader.onerror = () => reject(new Error("That file could not be read. Try another file."));
+      reader.readAsDataURL(file);
+    });
+  }
+
+  function downloadText(filename, text) {
+    const blob = new Blob([text], { type: "application/json" });
+    const a = document.createElement("a");
+    a.href = URL.createObjectURL(blob);
+    a.download = filename;
+    a.click();
+    URL.revokeObjectURL(a.href);
   }
 
   async function refreshLock() {
@@ -56,6 +131,22 @@
       <p class="muted">${escapeHtml((legal.jurisdiction && legal.jurisdiction.stub) || "")}</p>
       ${(legal.baseline || []).map((b) => `<div class="blurb"><strong>${escapeHtml(b.name)}</strong> <span class="muted">${escapeHtml(b.cite)}</span><p>${escapeHtml(b.blurb)}</p></div>`).join("")}
     </div>`;
+    await refreshReceipts();
+  }
+
+  async function refreshReceipts() {
+    const data = await api("/api/receipts");
+    lastReceipts = data.receipts || [];
+    ["#home-list", "#rec-list"].forEach((sel) => {
+      const list = $(sel);
+      if (!list) return;
+      list.innerHTML = "";
+      lastReceipts.slice().reverse().forEach((r) => list.appendChild(receiptCard(r)));
+    });
+    if (selectedHash) {
+      const row = lastReceipts.find((r) => r.hash === selectedHash);
+      if (row) renderDetail(row);
+    }
   }
 
   async function refreshIncidents() {
@@ -82,11 +173,93 @@
     const mode = b.dataset.mode;
     show(mode);
     if (mode === "home") refreshHome();
+    if (mode === "receipts") refreshReceipts();
     if (mode === "incident") refreshIncidents();
     if (mode === "journal") refreshJournal();
     if (mode === "filing") refreshFiling();
     if (mode === "lock") refreshLock();
   }));
+
+  $$("#view-toggle button").forEach((b) => b.addEventListener("click", () => {
+    viewMode = b.dataset.view;
+    applyView();
+    refreshReceipts();
+  }));
+
+  $("#btn-add-file").addEventListener("click", () => $("#add-file-input").click());
+  $("#add-file-input").addEventListener("change", async (ev) => {
+    const file = ev.target.files && ev.target.files[0];
+    ev.target.value = "";
+    if (!file) return;
+    $("#home-err").textContent = "";
+    try {
+      const b64 = await fileToB64(file);
+      const data = await api("/api/forensics/hash", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ content_b64: b64, file_name: file.name, summary: "local file hash" }),
+      });
+      if (data.error) { $("#home-err").textContent = data.error; return; }
+      selectedHash = data.receipt && data.receipt.hash;
+      showSaved(data);
+      refreshReceipts();
+    } catch (err) {
+      $("#home-err").textContent = err.message || String(err);
+    }
+  });
+
+  $("#btn-import").addEventListener("click", () => $("#import-file-input").click());
+  $("#import-file-input").addEventListener("change", async (ev) => {
+    const file = ev.target.files && ev.target.files[0];
+    ev.target.value = "";
+    if (!file) return;
+    $("#home-err").textContent = "";
+    try {
+      const text = await file.text();
+      const data = await api("/api/receipt/import", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ json: text }),
+      });
+      if (data.error || data.ok === false) {
+        $("#home-err").textContent = data.error || data.plain || "This receipt does not match its hash.";
+        return;
+      }
+      selectedHash = data.receipt && data.receipt.hash;
+      showSaved({ ...data, sha256: data.receipt && (data.receipt.imported_hash || data.receipt.hash) });
+      refreshReceipts();
+    } catch (err) {
+      $("#home-err").textContent = err.message || String(err);
+    }
+  });
+
+  $("#btn-export").addEventListener("click", async () => {
+    $("#home-err").textContent = "";
+    const body = selectedHash ? { hash: selectedHash } : {};
+    const data = await api("/api/receipt/export", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(body),
+    });
+    if (data.error) { $("#home-err").textContent = data.error; return; }
+    downloadText(data.filename || "receipt.json", data.content || "");
+    $("#saved-box").classList.remove("hidden");
+    $("#saved-hash").textContent = data.filename || "";
+    $("#saved-note").textContent = data.plain || "Copied this receipt into a file you can keep.";
+  });
+
+  $("#btn-demo").addEventListener("click", async () => {
+    $("#home-err").textContent = "";
+    const data = await api("/api/demo", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({}),
+    });
+    if (data.error) { $("#home-err").textContent = data.error; return; }
+    selectedHash = data.receipt && data.receipt.hash;
+    showSaved(data);
+    refreshReceipts();
+  });
 
   $("#inc-save").addEventListener("click", async () => {
     $("#inc-err").textContent = "";
@@ -241,6 +414,7 @@
     else $("#ov-err").textContent = "Passphrase did not match.";
   });
 
+  applyView();
   const start = (location.hash || "#home").replace("#", "") || "home";
   show(start);
   refreshLock().then(() => { refreshHome(); });

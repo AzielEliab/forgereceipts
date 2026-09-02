@@ -50,6 +50,7 @@ def test_tools_pages_do_not_500(base_url: str) -> None:
         "/tools",
         "/verify",
         "/lock",
+        "/receipts",
         "/api/tools",
         "/api/meta",
         "/static/style.css",
@@ -92,3 +93,60 @@ def test_incident_roundtrip(base_url: str) -> None:
     assert status == 200
     assert data["receipt"]["kind"] == "incident"
     assert data["verify"]["verdict"] == "PASS"
+
+
+
+def test_home_has_giant_actions(base_url: str) -> None:
+    status, body = _get(base_url + "/")
+    assert status == 200
+    assert "Add file" in body
+    assert "Import receipt" in body
+    assert "Export receipt" in body
+    assert "Saved a receipt for this file" in body
+    assert "Try a sample" in body
+    assert "Simple" in body
+    assert "Advanced" in body
+    assert "not legal proof" in body.lower()
+
+
+def test_demo_saves_receipt(base_url: str) -> None:
+    status, data = _post(base_url + "/api/demo", {})
+    assert status == 200
+    assert data["plain"] == "Saved a receipt for this file"
+    assert data["receipt"]["file_name"]
+    assert len(data["sha256"]) == 64
+    assert data.get("not_legal_proof") is True
+
+
+def test_export_import_http_roundtrip(base_url: str) -> None:
+    status, created = _post(base_url + "/api/demo", {})
+    assert status == 200
+    digest = created["receipt"]["hash"]
+    status, exported = _post(base_url + "/api/receipt/export", {"hash": digest})
+    assert status == 200
+    assert "forgereceipts.receipt/v1" in exported["content"]
+    status, imported = _post(base_url + "/api/receipt/import", {"json": exported["content"]})
+    assert status == 200
+    assert imported["ok"] is True
+    assert imported["receipt"]["imported_hash"] == digest
+
+
+def test_bad_json_is_plain(base_url: str) -> None:
+    from urllib.error import HTTPError
+    from urllib.request import Request, urlopen
+
+    req = Request(
+        base_url + "/api/verify",
+        data=b"this is not json {{",
+        headers={"Content-Type": "application/json"},
+        method="POST",
+    )
+    try:
+        urlopen(req, timeout=5)
+        raise AssertionError("expected HTTPError")
+    except HTTPError as exc:
+        assert exc.code == 400
+        body = json.loads(exc.read().decode("utf-8"))
+        assert "JSON" in body["error"]
+        assert "Traceback" not in body["error"]
+        assert body.get("plain") is True
