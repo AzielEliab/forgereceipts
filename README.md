@@ -173,3 +173,14 @@ curl -sS -X POST https://forgereceipts-download-tracker.vibelock.workers.dev/v1/
 ```
 
 GET `/download` still serves the gzip tarball and is counted.
+
+## Cite this
+
+Aziel Eliab. ForgeReceipts. https://github.com/AzielEliab/forgereceipts. https://forgereceipts-download-tracker.vibelock.workers.dev. https://doi.org/10.5281/zenodo.21436074.
+
+- Catalog: https://aziel-runtime.vibelock.workers.dev/
+- Worker homepage: https://forgereceipts-download-tracker.vibelock.workers.dev/
+- Counted download (gzip HTTP 200, no 302): https://forgereceipts-download-tracker.vibelock.workers.dev/download
+- GitHub: https://github.com/AzielEliab/forgereceipts
+- Citation JSON: https://forgereceipts-download-tracker.vibelock.workers.dev/cite.json
+- DOI: https://doi.org/10.5281/zenodo.21436074
