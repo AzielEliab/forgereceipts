@@ -128,6 +128,21 @@ def _check_roundtrip(directory: Path) -> tuple[bool, str, str]:
     )
 
 
+def _check_jurisdictions() -> tuple[bool, str, str]:
+    from forgereceipts.jurisdictions import DISTRICT_IDS, STATE_IDS, list_jurisdictions
+
+    rows = list_jurisdictions()
+    ids = {r["id"] for r in rows}
+    ok = len(STATE_IDS) == 50 and "DC" in ids and "US" in ids and "IN" in ids
+    detail = f"{len(STATE_IDS)} states, DC={('DC' in DISTRICT_IDS)}, federal={'US' in ids}"
+    plain = (
+        "All 50 states, DC, and the federal baseline are loaded."
+        if ok
+        else "The state list is missing. That should not happen."
+    )
+    return ok, detail, plain
+
+
 def run_doctor(data_dir: str | Path | None = None) -> dict[str, Any]:
     directory = resolve_data_dir(data_dir)
     debug_log(f"doctor data_dir={directory} debug={debug_enabled()}")
@@ -156,6 +171,7 @@ def run_doctor(data_dir: str | Path | None = None) -> dict[str, Any]:
     add("demo", _check_demo)
     add("roundtrip", lambda: _check_roundtrip(directory))
     add("chain", lambda: _check_chain(directory))
+    add("jurisdictions", _check_jurisdictions)
     add(
         "debug",
         lambda: (

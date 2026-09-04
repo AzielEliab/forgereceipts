@@ -4,7 +4,7 @@
 set -euo pipefail
 
 HOST="${FORGERECEIPTS_HOME_HOST:-https://forgereceipts-download-tracker.vibelock.workers.dev}"
-ASSET="${FORGERECEIPTS_HOME_ASSET:-forgereceipts-0.2.0.tar.gz}"
+ASSET="${FORGERECEIPTS_HOME_ASSET:-forgereceipts-0.3.0.tar.gz}"
 WORKDIR="${FORGERECEIPTS_HOME:-$HOME/forgereceipts}"
 
 mkdir -p "$WORKDIR"

@@ -13,7 +13,7 @@ Empowering Documentation · Child-Focused Advocacy · Procedural Equity
 tool. It is **not legal advice** and does not guarantee any court
 outcome. Family law varies by jurisdiction. Consult a licensed attorney
 in your state. Canonical author is Aziel Eliab,
-Indianapolis. Ignore any duplicate byline.
+Indianapolis.
 
 ---
 
@@ -44,10 +44,17 @@ Core capabilities in v0.1.0:
 - Tools panels that import the other engines when present
 - Progressive-web-app-style UI on **127.0.0.1 only**, no CDN, no telemetry, no accounts
 
-v0.2.0 adds giant Add file / Import receipt / Export receipt, list + detail views,
-simple/advanced, `forgereceipts doctor`, `forgereceipts verify-receipt`,
-plain errors on bad JSON, size limits, `FORGERECEIPTS_DEBUG=1`, and a sample demo.
-A receipt is not legal proof.
+v0.2.0 added giant Add file / Import receipt / Export receipt, list + detail
+views, `forgereceipts doctor`, `forgereceipts verify-receipt`, plain errors,
+size limits, `FORGERECEIPTS_DEBUG=1`, and a sample demo.
+
+v0.3.0 is a clean beginner UI (Log · Journal · Forensics · File · Guide ·
+Verify · Import/Export) plus a user-selected jurisdiction covering all 50
+states, DC, and a federal/national baseline that is always shown. Selecting
+a state customizes tags, filing caption/exhibit defaults, Odyssey or generic
+e-filing notes, and Guide snippets. The choice is saved in the local data
+dir. Depth is labeled (`named` / `baseline` / `limited`). No fabricated
+case citations. A receipt is not legal proof.
 
 All data remains on the user's device. The platform addresses the
 documentation gap, knowledge gap, and credibility gap that
@@ -96,8 +103,9 @@ a local, append-only place to keep receipts.
    English, templates, and named national sources (Troxel, Stanley,
    UCCJEA) as blurbs that tell the user to read the primary source.
    Not legal advice. Indiana is a default *selector label* because the
-   author lives in Indianapolis; v0.1.0 does not encode Indiana
-   statutes.
+   author lives in Indianapolis. v0.3.0 ships structured public-label
+   profiles for all 50 states, DC, and territories; it still does not
+   encode a full statute book.
 
 ---
 
@@ -149,15 +157,15 @@ Forks are valid and detectable; this product does not pick a winner.
 
 ## 6. Screens
 
-1. **Home** — disclaimer, motto, Pattern Strength Score, national legal stub.
-2. **Incident log** — append-only entries; child impact required.
+1. **Log** — append-only entries; child impact required; state tags.
+2. **Journal** — Time with Child; optional file hash; private note.
 3. **Forensics** — SHA-256 a local file; store hash; re-verify later.
-4. **Time with Child** — journal; optional file hash; private note.
-5. **Filing assistant** — caption placeholders, Petitioner's Exhibit 1 /
-   Respondent's Exhibit A, conceptual e-filing checklist, export .txt/.html.
-6. **Tools** — engine panels if importable.
-7. **Verify** — paste or load JSONL, PASS/FAIL.
-8. **Lock** — optional local passphrase (pbkdf2_hmac).
+4. **File** — caption placeholders, exhibit labels for the selected state,
+   Odyssey or generic e-filing checklist, export .txt/.html.
+5. **Guide** — beginner procedure stubs plus the federal baseline.
+6. **Verify** — paste or load JSONL, PASS/FAIL.
+7. **Import/Export** — Add file / Import receipt / Export receipt / sample.
+8. **Check this computer** — doctor, optional lock, engine tools (footer).
 
 ---
 

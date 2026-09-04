@@ -4,39 +4,163 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="theme-color" content="#c4a35a">
-<title>ForgeReceipts — local-first evidence integrity</title>
+<title>ForgeReceipts — local notes, not legal advice</title>
 <link rel="manifest" href="/manifest.webmanifest">
 <link rel="stylesheet" href="/static/style.css">
 </head>
 <body>
 <div class="disclaimer-banner">Not Legal Advice — a receipt is not legal proof — does not contact courts, Odyssey, or the cloud</div>
+
 <header class="app">
   <div class="brand">
     <h1>ForgeReceipts</h1>
     <p class="motto">Child's Best Interests First. Integrity Over Narrative. Local Control. Always.</p>
   </div>
-  <span class="local-pill">127.0.0.1 · no telemetry · no accounts</span>
+  <span class="local-pill">On this computer only · no accounts</span>
 </header>
+
+<section class="state-bar" id="state-bar">
+  <label for="state-filter">Your state</label>
+  <input id="state-filter" type="search" placeholder="Type to find your state" autocomplete="off" aria-label="Find your state">
+  <select id="state-select" aria-label="Your state">
+    <option value="IN">Indiana</option>
+  </select>
+  <p class="state-now">Showing guidance for <strong id="state-name">Indiana</strong>.</p>
+  <p class="federal-chip">Federal baseline is always on (Troxel, Stanley, evidence/civil rules, UCCJEA). That is national — not your state's law.</p>
+</section>
+
 <nav class="modes" id="nav">
-  <button data-mode="home" class="active">Home</button>
-  <button data-mode="receipts">Receipts</button>
-  <button data-mode="incident" data-advanced="1">Incident log</button>
-  <button data-mode="forensics" data-advanced="1">Forensics</button>
-  <button data-mode="journal" data-advanced="1">Time with Child</button>
-  <button data-mode="filing" data-advanced="1">Filing assistant</button>
-  <button data-mode="tools" data-advanced="1">Tools</button>
-  <button data-mode="verify">Verify</button>
-  <button data-mode="lock" data-advanced="1">Lock</button>
+  <button type="button" data-mode="log" class="active">Log</button>
+  <button type="button" data-mode="journal">Journal</button>
+  <button type="button" data-mode="forensics">Forensics</button>
+  <button type="button" data-mode="file">File</button>
+  <button type="button" data-mode="guide">Guide</button>
+  <button type="button" data-mode="verify">Verify</button>
+  <button type="button" data-mode="io">Import/Export</button>
 </nav>
+
 <main id="app">
-  <section class="card" data-panel="home">
-    <h2>Home</h2>
-    <p><strong>Not Legal Advice.</strong> A receipt is not legal proof. ForgeReceipts saves a hash of a file on this computer. It does not practice law, file anything, or talk to a court.</p>
-    <div class="view-toggle" id="view-toggle">
-      <button type="button" data-view="simple" class="active">Simple</button>
-      <button type="button" data-view="advanced">Advanced</button>
+  <section class="card" data-panel="log">
+    <h2>Log</h2>
+    <p class="help">Write what happened. You cannot edit later. A fix is a new note. Say how this matters to the child.</p>
+    <div class="giant-grid one">
+      <button class="giant" id="log-save" type="button">Save this note</button>
     </div>
-    <div class="giant-grid">
+    <label for="inc-summary">What happened</label>
+    <input id="inc-summary" placeholder="Short title">
+    <label for="inc-evidence">What you saw or have</label>
+    <textarea id="inc-evidence" placeholder="Facts only. Not a speech."></textarea>
+    <label for="inc-impact">How this matters to the child (required)</label>
+    <textarea id="inc-impact" placeholder="Child's best interests — in your own words"></textarea>
+    <p class="muted" id="log-tags-label">Suggested tags for this state (tap to add)</p>
+    <div id="log-tags" class="tag-row"></div>
+    <label class="more-label" for="inc-conf">How sure are you (0 to 1)</label>
+    <input id="inc-conf" type="number" min="0" max="1" step="0.05" value="1">
+    <p class="error" id="inc-err"></p>
+    <div class="score-row" id="log-score"></div>
+    <h3>Saved notes</h3>
+    <div id="inc-list"></div>
+    <div id="inc-detail" class="detail hidden"></div>
+  </section>
+
+  <section class="card hidden" data-panel="journal">
+    <h2>Journal</h2>
+    <p class="help">Time with your child. Photos and receipts stay on this computer. A private note is not part of the hash.</p>
+    <div class="giant-grid one">
+      <button class="giant" id="j-save" type="button">Save time with child</button>
+    </div>
+    <label for="j-summary">What you did</label>
+    <input id="j-summary" placeholder="Afternoon at the park">
+    <label for="j-evidence">What happened</label>
+    <textarea id="j-evidence"></textarea>
+    <label for="j-impact">How this served the child (required)</label>
+    <textarea id="j-impact" placeholder="In your own words"></textarea>
+    <label for="j-file">Optional photo or receipt</label>
+    <input id="j-file" type="file">
+    <input id="j-hash" class="hidden" placeholder="hash">
+    <label for="j-private">Private note (not hashed)</label>
+    <textarea id="j-private"></textarea>
+    <p class="error" id="j-err"></p>
+    <div id="j-list"></div>
+  </section>
+
+  <section class="card hidden" data-panel="forensics">
+    <h2>Forensics</h2>
+    <p class="help">Make a fingerprint (SHA-256) of a file on this computer. Later you can check the file is the same bytes. Files never leave this machine.</p>
+    <div class="giant-grid two">
+      <button class="giant" id="for-pick" type="button">Hash a file</button>
+      <button class="giant ghost-giant" id="for-reverify" type="button">Check a file</button>
+    </div>
+    <input id="for-file" class="hidden" type="file">
+    <label for="for-path">Or a path on this computer</label>
+    <input id="for-path" placeholder="/home/you/exhibit.pdf">
+    <label for="for-name">File name</label>
+    <input id="for-name" placeholder="exhibit.pdf">
+    <label for="for-expected">Saved fingerprint (to check later)</label>
+    <input id="for-expected" placeholder="64 letters and numbers">
+    <pre class="out" id="for-out"></pre>
+  </section>
+
+  <section class="card hidden" data-panel="file">
+    <h2>File</h2>
+    <p class="help">Local templates only. This app does not talk to Odyssey or any court. You print or save a file yourself.</p>
+    <p class="state-hint" id="file-efile"></p>
+    <label for="f-state">State on the caption</label>
+    <input id="f-state" value="Indiana">
+    <label for="f-court">Court name</label>
+    <input id="f-court" value="[COURT NAME]">
+    <label for="f-pet">Petitioner</label>
+    <input id="f-pet" value="[PETITIONER]">
+    <label for="f-resp">Respondent</label>
+    <input id="f-resp" value="[RESPONDENT]">
+    <label for="f-cause">Cause no.</label>
+    <input id="f-cause" value="[CAUSE NO.]">
+    <label for="f-role">Your role</label>
+    <select id="f-role"><option>Petitioner</option><option>Respondent</option></select>
+    <label for="f-title">Title</label>
+    <input id="f-title" value="MOTION">
+    <label for="f-body">Body (your words)</label>
+    <textarea id="f-body">[Write in your own words. Not legal advice.]</textarea>
+    <label for="f-ex">How many exhibits</label>
+    <input id="f-ex" type="number" min="0" value="3">
+    <label for="f-party">Exhibit labels</label>
+    <select id="f-party">
+      <option value="petitioner">Petitioner's Exhibit 1, 2, 3…</option>
+      <option value="respondent">Respondent's Exhibit A, B, C…</option>
+    </select>
+    <div class="giant-grid two">
+      <button class="giant" id="f-txt" type="button">Save as text</button>
+      <button class="giant ghost-giant" id="f-html" type="button">Save as page</button>
+    </div>
+    <div id="f-check"></div>
+    <pre class="out" id="f-out"></pre>
+  </section>
+
+  <section class="card hidden" data-panel="guide">
+    <h2>Guide</h2>
+    <p class="help">Plain-English steps. Not legal advice. Federal names stay visible next to your state.</p>
+    <p class="honesty" id="guide-honesty"></p>
+    <div id="guide-federal" class="federal-box"></div>
+    <div id="guide-topics"></div>
+  </section>
+
+  <section class="card hidden" data-panel="verify">
+    <h2>Verify</h2>
+    <p class="help">Check that a saved receipt still matches its fingerprint. Pass or fail only — not a truth score.</p>
+    <div class="giant-grid two">
+      <button class="giant" id="v-local" type="button">Check saved notes</button>
+      <button class="giant ghost-giant" id="v-run" type="button">Check pasted text</button>
+    </div>
+    <label for="v-jsonl">Paste a receipt file</label>
+    <textarea id="v-jsonl" placeholder="paste JSON or JSONL"></textarea>
+    <p id="v-verdict" class="verdict"></p>
+    <pre class="out" id="v-out"></pre>
+  </section>
+
+  <section class="card hidden" data-panel="io">
+    <h2>Import / Export</h2>
+    <p class="help">Add a file, bring in a receipt you already saved, or copy a receipt out. Try a sample if you just want to see how it looks.</p>
+    <div class="giant-grid three">
       <button class="giant" id="btn-add-file" type="button">Add file</button>
       <button class="giant ghost-giant" id="btn-import" type="button">Import receipt</button>
       <button class="giant ghost-giant" id="btn-export" type="button">Export receipt</button>
@@ -46,194 +170,93 @@
     <div class="row">
       <button class="act" id="btn-demo" type="button">Try a sample</button>
     </div>
-    <p class="help">Add file keeps a receipt for that file. Import receipt reads a receipt you already saved. Export receipt copies a receipt to a file. Try a sample if you just want to see how it looks.</p>
     <div id="saved-box" class="saved-banner hidden" role="status">
       <p class="saved-title">Saved a receipt for this file</p>
       <p class="hash" id="saved-hash"></p>
       <p class="muted" id="saved-note"></p>
     </div>
     <p class="error" id="home-err"></p>
-    <h2>Receipts</h2>
-    <p class="help">List view. Tap one to open the detail view.</p>
+    <h3>Receipts</h3>
     <div id="home-list"></div>
     <div id="home-detail" class="detail hidden"></div>
-    <div class="card advanced-only" style="margin-top:1rem">
-      <div class="score" id="pss">—</div>
-      <p class="muted">Pattern Strength Score (local heuristic, not a win probability)</p>
-      <div class="bar"><span id="pss-bar" style="width:0%"></span></div>
-      <p class="muted" id="pss-note"></p>
+  </section>
+
+  <section class="card hidden" data-panel="doctor">
+    <h2>Check this computer</h2>
+    <p class="help">Doctor looks only at this machine. Debug stays here. No telemetry.</p>
+    <div class="giant-grid one">
+      <button class="giant" id="doc-run" type="button">Run doctor</button>
     </div>
-    <div id="legal-box" class="advanced-only"></div>
-  </section>
-
-  <section class="card hidden" data-panel="receipts">
-    <h2>Receipts</h2>
-    <p class="help">List and detail. Simple shows the name and the hash. Advanced shows every field.</p>
-    <div id="rec-list"></div>
-    <div id="rec-detail" class="detail hidden"></div>
-  </section>
-
-  <section class="card hidden" data-panel="incident">
-    <h2>Incident log</h2>
-    <p class="help">Append-only TemporalLock receipts. You cannot edit or delete. A correction is a new receipt. Child impact is required.</p>
-    <label>Summary</label>
-    <input id="inc-summary" placeholder="What was observed">
-    <label>Evidence (required)</label>
-    <textarea id="inc-evidence" placeholder="What supports the observation"></textarea>
-    <label>Child impact (required)</label>
-    <textarea id="inc-impact" placeholder="How this relates to the child's best interests"></textarea>
-    <label>Confidence (0.0–1.0)</label>
-    <input id="inc-conf" type="number" min="0" max="1" step="0.05" value="1">
-    <div class="row"><button class="act" id="inc-save">Append receipt</button></div>
-    <p class="error" id="inc-err"></p>
-    <div id="inc-list"></div>
-  </section>
-
-  <section class="card hidden" data-panel="forensics">
-    <h2>Forensics</h2>
-    <p class="help">SHA-256 of a local file is stored on a receipt. Re-verify later against the same bytes. Files never leave this machine.</p>
-    <label>Local path (this computer)</label>
-    <input id="for-path" placeholder="/absolute/path/to/file">
-    <label>Or paste file bytes as base64 (optional)</label>
-    <textarea id="for-b64" placeholder="base64…"></textarea>
-    <label>File name</label>
-    <input id="for-name" placeholder="exhibit.pdf">
-    <div class="row">
-      <button class="act" id="for-hash">Hash and store on receipt</button>
-    </div>
-    <label>Expected SHA-256 (to re-verify)</label>
-    <input id="for-expected" placeholder="64 hex chars">
-    <div class="row"><button class="ghost" id="for-reverify">Re-verify</button></div>
-    <pre class="out" id="for-out"></pre>
-  </section>
-
-  <section class="card hidden" data-panel="journal">
-    <h2>Time with Child</h2>
-    <p class="help">Parenting documentation you already have. Optional file hash. Private note is stored locally and is not part of the TemporalLock hash.</p>
-    <label>Summary</label>
-    <input id="j-summary" placeholder="Afternoon at the park">
-    <label>What happened</label>
-    <textarea id="j-evidence"></textarea>
-    <label>Child impact (required)</label>
-    <textarea id="j-impact" placeholder="How this time served the child"></textarea>
-    <label>Optional file SHA-256</label>
-    <input id="j-hash" placeholder="hash of a photo already on this device">
-    <label>Private note (not hashed)</label>
-    <textarea id="j-private"></textarea>
-    <div class="row"><button class="act" id="j-save">Append journal receipt</button></div>
-    <p class="error" id="j-err"></p>
-    <div id="j-list"></div>
-  </section>
-
-  <section class="card hidden" data-panel="filing">
-    <h2>Filing assistant</h2>
-    <p class="help">Local templates only. This app does not talk to Odyssey or any court. You print or export .txt / .html yourself.</p>
-    <label>State</label><input id="f-state" value="Indiana">
-    <label>Court name</label><input id="f-court" value="[COURT NAME]">
-    <label>Petitioner</label><input id="f-pet" value="[PETITIONER]">
-    <label>Respondent</label><input id="f-resp" value="[RESPONDENT]">
-    <label>Cause no.</label><input id="f-cause" value="[CAUSE NO.]">
-    <label>Your role</label>
-    <select id="f-role"><option>Petitioner</option><option>Respondent</option></select>
-    <label>Motion title</label><input id="f-title" value="MOTION">
-    <label>Body</label><textarea id="f-body">[Write in your own words. Not legal advice.]</textarea>
-    <label>Exhibit count</label><input id="f-ex" type="number" min="0" value="3">
-    <label>Exhibit party</label>
-    <select id="f-party"><option value="petitioner">Petitioner's Exhibit 1, 2, 3…</option><option value="respondent">Respondent's Exhibit A, B, C…</option></select>
-    <div class="row">
-      <button class="act" id="f-txt">Export .txt</button>
-      <button class="ghost" id="f-html">Export .html</button>
-    </div>
-    <div id="f-check"></div>
-    <pre class="out" id="f-out"></pre>
-  </section>
-
-  <section class="card hidden" data-panel="tools">
-    <h2>Tools</h2>
-    <p class="help">Vendored engines, imported if available. MirageGrid is logical nodes only — not a proxy or IP-hiding network.</p>
-    <div class="tools-grid">
-      <div class="card">
-        <h2>VibeLock</h2>
-        <p class="muted">Score a synthetic local wav pair.</p>
-        <button class="act" data-tool="vibelock">Run</button>
-      </div>
-      <div class="card">
-        <h2>CodeLock</h2>
-        <p class="muted">Gate phrase required: This tool alters perception, not meaning.</p>
-        <label>Source</label><textarea id="cl-source">plain source text</textarea>
-        <label>Acknowledgment</label><input id="cl-ack" value="This tool alters perception, not meaning.">
-        <button class="act" data-tool="codelock">Render</button>
-      </div>
-      <div class="card">
-        <h2>ShadowLock</h2>
-        <p class="muted">Observe pasted JSONL. Read-only, then forget.</p>
-        <textarea id="sl-jsonl">{"id":"1","task_class":"visit","actual_outcome":"ok","actual_revenue":0,"actual_cost":0}</textarea>
-        <button class="act" data-tool="shadowlock">Observe</button>
-      </div>
-      <div class="card">
-        <h2>VeilLock</h2>
-        <p class="muted">Encrypt synthetic frames in-process.</p>
-        <button class="act" data-tool="veillock">Encrypt frames</button>
-      </div>
-      <div class="card">
-        <h2>GodLock</h2>
-        <p class="muted">Submit text to the in-memory engine.</p>
-        <textarea id="gl-text">local stress text</textarea>
-        <button class="act" data-tool="godlock">Submit</button>
-      </div>
-      <div class="card">
-        <h2>StaticClock</h2>
-        <p class="muted">Advise a geo, then forget. Advisory only.</p>
-        <input id="sc-geo" value="Indianapolis">
-        <button class="act" data-tool="staticclock">Advise</button>
-      </div>
-      <div class="card">
-        <h2>MirageGrid</h2>
-        <p class="muted">Assign one logical node from a pool of 25. Not a network.</p>
-        <button class="act" data-tool="miragegrid">Assign</button>
-      </div>
-    </div>
-    <pre class="out" id="tools-out"></pre>
-  </section>
-
-  <section class="card hidden" data-panel="verify">
-    <h2>Verify</h2>
-    <p class="help">Load a chain JSONL or a receipt JSON and show PASS or FAIL. Hashes and links only — not a truth score. A receipt is not legal proof.</p>
-    <textarea id="v-jsonl" placeholder="paste JSON or JSONL"></textarea>
-    <div class="row">
-      <button class="act" id="v-run">Verify pasted</button>
-      <button class="ghost" id="v-local">Verify local chain</button>
-    </div>
-    <p id="v-verdict" class="verdict"></p>
-    <pre class="out" id="v-out"></pre>
-  </section>
-
-  <section class="card hidden" data-panel="lock">
-    <h2>Lock / password</h2>
-    <p class="help">Optional local passphrase. PBKDF2-HMAC-SHA256. Hash in memory. Not cloud auth. Not full-disk encryption.</p>
-    <label>Passphrase</label>
+    <p id="doc-plain" class="help"></p>
+    <div id="doc-list"></div>
+    <pre class="out hidden" id="doc-out"></pre>
+    <h3>Optional lock</h3>
+    <p class="help">A password on this computer only. Not cloud login. Not full-disk encryption.</p>
+    <label for="lk-pass">Password</label>
     <input id="lk-pass" type="password">
     <div class="row">
-      <button class="act" id="lk-set">Set / replace</button>
-      <button class="ghost" id="lk-unlock">Unlock</button>
-      <button class="ghost" id="lk-clear">Clear lock</button>
+      <button class="act" id="lk-set" type="button">Set / replace</button>
+      <button class="ghost" id="lk-unlock" type="button">Unlock</button>
+      <button class="ghost" id="lk-clear" type="button">Clear lock</button>
     </div>
     <pre class="out" id="lk-out"></pre>
+    <details class="tools-details">
+      <summary>Engine tools (optional)</summary>
+      <p class="help">Only if those engines imported. MirageGrid is not a network.</p>
+      <div class="tools-grid">
+        <div class="mini">
+          <h3>VibeLock</h3>
+          <button class="ghost" data-tool="vibelock" type="button">Run</button>
+        </div>
+        <div class="mini">
+          <h3>CodeLock</h3>
+          <textarea id="cl-source">plain source text</textarea>
+          <input id="cl-ack" value="This tool alters perception, not meaning.">
+          <button class="ghost" data-tool="codelock" type="button">Render</button>
+        </div>
+        <div class="mini">
+          <h3>ShadowLock</h3>
+          <textarea id="sl-jsonl">{"id":"1","task_class":"visit","actual_outcome":"ok","actual_revenue":0,"actual_cost":0}</textarea>
+          <button class="ghost" data-tool="shadowlock" type="button">Observe</button>
+        </div>
+        <div class="mini">
+          <h3>VeilLock</h3>
+          <button class="ghost" data-tool="veillock" type="button">Encrypt frames</button>
+        </div>
+        <div class="mini">
+          <h3>GodLock</h3>
+          <textarea id="gl-text">local stress text</textarea>
+          <button class="ghost" data-tool="godlock" type="button">Submit</button>
+        </div>
+        <div class="mini">
+          <h3>StaticClock</h3>
+          <input id="sc-geo" value="Indianapolis">
+          <button class="ghost" data-tool="staticclock" type="button">Advise</button>
+        </div>
+        <div class="mini">
+          <h3>MirageGrid</h3>
+          <button class="ghost" data-tool="miragegrid" type="button">Assign</button>
+        </div>
+      </div>
+      <pre class="out" id="tools-out"></pre>
+    </details>
   </section>
 </main>
+
 <div id="lock-overlay" class="hidden">
   <div class="card">
     <h2>Unlock ForgeReceipts</h2>
-    <p class="help">Local passphrase. Not Legal Advice. Data stays on this machine.</p>
-    <input id="ov-pass" type="password" placeholder="passphrase">
-    <div class="row"><button class="act" id="ov-unlock">Unlock</button></div>
+    <p class="help">Local password. Not Legal Advice. Data stays on this machine.</p>
+    <input id="ov-pass" type="password" placeholder="password">
+    <div class="row"><button class="act" id="ov-unlock" type="button">Unlock</button></div>
     <p class="error" id="ov-err"></p>
   </div>
 </div>
+
 <footer>
-  Aziel Eliab, Indianapolis · Apache-2.0 ·
-  Forks welcome ·
-  <a href="https://forgereceipts-download-tracker.vibelock.workers.dev/">Counted download (the only counter for this product)</a>
+  Aziel Eliab, Indianapolis · Apache-2.0 · Forks welcome ·
+  <button type="button" class="linkish" id="btn-doctor">Check this computer</button>
+  · <a href="https://forgereceipts-download-tracker.vibelock.workers.dev/">Counted download</a>
   · <a href="https://github.com/AzielEliab/forgereceipts">GitHub</a>
 </footer>
 <script src="/static/app.js"></script>

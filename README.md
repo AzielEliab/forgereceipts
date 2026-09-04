@@ -39,7 +39,7 @@ The Worker serves the gzip itself (HTTP 200, no 302 to GitHub).
 # → [https://forgereceipts-download-tracker.vibelock.workers.dev/](https://forgereceipts-download-tracker.vibelock.workers.dev/) ←
 
 Direct tarball (also counted):
-[forgereceipts-0.2.0.tar.gz](https://forgereceipts-download-tracker.vibelock.workers.dev/download?asset=forgereceipts-0.2.0.tar.gz)
+[forgereceipts-0.3.0.tar.gz](https://forgereceipts-download-tracker.vibelock.workers.dev/download?asset=forgereceipts-0.3.0.tar.gz)
 
 - Live count JSON: [https://forgereceipts-download-tracker.vibelock.workers.dev/stats](https://forgereceipts-download-tracker.vibelock.workers.dev/stats)
 - OpenAPI: [https://forgereceipts-download-tracker.vibelock.workers.dev/openapi.json](https://forgereceipts-download-tracker.vibelock.workers.dev/openapi.json)
@@ -69,7 +69,7 @@ Isolated counter: Worker `forgereceipts-download-tracker`, KV `FORGERECEIPTS_DOW
    forgereceipts ui
    ```
 
-3. Open http://127.0.0.1:8787 and tap **Add file** (or **Try a sample**). You should see **Saved a receipt for this file** and a hash.
+3. Open http://127.0.0.1:8787. Pick **your state** at the top. Use **Log · Journal · Forensics · File · Guide · Verify · Import/Export**. Tap **Add file** or **Try a sample** on Import/Export. You should see **Saved a receipt for this file** and a hash.
 
 Loopback only (127.0.0.1). No CDN, no telemetry, no accounts. Receipts stay on this computer.
 
@@ -77,6 +77,12 @@ Check the install: `forgereceipts doctor`
 Check a saved receipt file: `forgereceipts verify-receipt path/to/receipt.json`
 
 Counted download: [https://forgereceipts-download-tracker.vibelock.workers.dev/](https://forgereceipts-download-tracker.vibelock.workers.dev/)
+
+**Ship note (0.3.0):** this tree is versioned 0.3.0. The live Worker still
+serves 0.2.0 until someone builds `forgereceipts-0.3.0.tar.gz`, hosts it
+on the Worker assets binding, deploys `workers/download-tracker`, and
+cuts a GitHub release. `/v1` on the Worker does not store files and is
+not a court filing.
 
 
 
@@ -93,7 +99,7 @@ The big button on that page is the download. The number next to it is
 VibeLock, CodeLock, VeilLock, GodLock, ShadowLock, StaticClock, and
 MirageGrid are engines inside this tree, not separate downloads.
 
-Direct tarball (also counted): [forgereceipts-0.2.0.tar.gz](https://forgereceipts-download-tracker.vibelock.workers.dev/download?asset=forgereceipts-0.2.0.tar.gz)
+Direct tarball (also counted): [forgereceipts-0.3.0.tar.gz](https://forgereceipts-download-tracker.vibelock.workers.dev/download?asset=forgereceipts-0.3.0.tar.gz)
 
 - Live count JSON: [https://forgereceipts-download-tracker.vibelock.workers.dev/count](https://forgereceipts-download-tracker.vibelock.workers.dev/count)
 - GitHub: [https://github.com/AzielEliab/forgereceipts](https://github.com/AzielEliab/forgereceipts)
@@ -117,10 +123,11 @@ Forks are welcome and always allowed.
 ## What it is
 
 One unified local-first product. TemporalLock is the append-only ledger.
-Incident log, Forensics (SHA-256), Time with Child journal, a local filing
-assistant (templates and conceptual e-filing checklists — no court
-connection), Verify, an optional PBKDF2 session lock, and Tools panels
-for the other *Lock engines if they import.
+Log, Journal (Time with Child), Forensics (SHA-256), File (templates and
+conceptual e-filing checklists — no court connection), Guide, Verify,
+Import/Export, an optional PBKDF2 session lock, and doctor/debug for
+the other *Lock engines if they import. All 50 states + DC + federal
+baseline; the selected state is remembered in `./.forgereceipts`.
 
 Data lives in `./.forgereceipts` (gitignored). Never uploaded.
 

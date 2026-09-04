@@ -26,12 +26,15 @@ from forgereceipts.exchange import (
 )
 from forgereceipts.filing import render_html, render_txt, templates as filing_templates
 from forgereceipts.forensics import reverify_bytes, reverify_path, sha256_bytes, sha256_path
-from forgereceipts.legal import NOT_LEGAL_ADVICE, reference as legal_reference
+from forgereceipts.guide import topics_for
+from forgereceipts.jurisdictions import DEFAULT_JURISDICTION, get_jurisdiction
+from forgereceipts.legal import NOT_LEGAL_ADVICE, catalog as legal_catalog, reference as legal_reference
 from forgereceipts.limits import MAX_BODY, MAX_FILE_BYTES
 from forgereceipts.lock import SessionLock
 from forgereceipts.paths import data_dir as resolve_data_dir
 from forgereceipts.plain import NOT_LEGAL_PROOF, TOO_BIG, PlainError, parse_json_bytes
 from forgereceipts.score import pattern_strength
+from forgereceipts.settings import load_settings, save_settings
 from forgereceipts.store import ForgeStore, verify_jsonl
 from forgereceipts.tools import availability as tools_availability, run as tools_run
 
@@ -63,7 +66,7 @@ def reset_state() -> None:
 
 
 class ForgeHandler(BaseHTTPRequestHandler):
-    server_version = "ForgeReceipts/0.2.0"
+    server_version = f"ForgeReceipts/{__version__}"
 
     @property
     def data_dir(self) -> Path:
@@ -166,17 +169,22 @@ class ForgeHandler(BaseHTTPRequestHandler):
         # SPA routes — never 500 a tools/nav page.
         if path in {
             "/home",
+            "/log",
             "/incident",
             "/forensics",
             "/journal",
+            "/file",
             "/filing",
+            "/guide",
             "/tools",
             "/verify",
             "/lock",
             "/receipts",
             "/import",
             "/export",
+            "/io",
             "/demo",
+            "/doctor",
         }:
             self._spa()
             return
@@ -221,27 +229,48 @@ class ForgeHandler(BaseHTTPRequestHandler):
         lock: SessionLock = state["lock"]
 
         if path == "/api/meta":
+            settings = load_settings(self.data_dir)
+            selected = get_jurisdiction(settings.get("jurisdiction"))
             self._json(
                 {
                     "name": "ForgeReceipts",
                     "version": __version__,
+                    "author": "Aziel Eliab",
                     "motto": "Child's Best Interests First. Integrity Over Narrative. Local Control. Always.",
-                    "disclaimer": NOT_LEGAL_ADVICE,
+                    "disclaimer": NOT_LEGAL_PROOF,
+                    "legal_disclaimer": NOT_LEGAL_ADVICE,
                     "bind": "127.0.0.1",
                     "local_only": True,
                     "telemetry": False,
                     "accounts": False,
                     "not_legal_advice": True,
                     "not_legal_proof": True,
-                    "disclaimer": NOT_LEGAL_PROOF,
                     "debug": debug_enabled(),
                     "max_file_bytes": MAX_FILE_BYTES,
                     "download": "https://forgereceipts-download-tracker.vibelock.workers.dev/",
                     "one_counter": True,
                     "lock": lock.status(),
                     "tools": tools_availability(),
+                    "jurisdiction": selected["id"],
+                    "jurisdiction_name": selected["name"],
+                    "settings": settings,
+                    "nav": [
+                        "log",
+                        "journal",
+                        "forensics",
+                        "file",
+                        "guide",
+                        "verify",
+                        "io",
+                    ],
                 }
             )
+            return
+        if path == "/api/settings":
+            self._json(load_settings(self.data_dir))
+            return
+        if path == "/api/jurisdictions":
+            self._json(legal_catalog())
             return
         if path == "/api/lock":
             self._json(lock.status())
@@ -278,11 +307,19 @@ class ForgeHandler(BaseHTTPRequestHandler):
             self._json(pattern_strength(store.records()))
             return
         if path == "/api/legal":
-            jid = (qs.get("jurisdiction") or ["IN"])[0]
+            settings = load_settings(self.data_dir)
+            jid = (qs.get("jurisdiction") or [settings.get("jurisdiction") or DEFAULT_JURISDICTION])[0]
             self._json(legal_reference(jid))
             return
+        if path == "/api/guide":
+            settings = load_settings(self.data_dir)
+            jid = (qs.get("jurisdiction") or [settings.get("jurisdiction") or DEFAULT_JURISDICTION])[0]
+            self._json(topics_for(jid))
+            return
         if path == "/api/filing":
-            self._json(filing_templates())
+            settings = load_settings(self.data_dir)
+            jid = (qs.get("jurisdiction") or [settings.get("jurisdiction") or DEFAULT_JURISDICTION])[0]
+            self._json(filing_templates(jid))
             return
         if path == "/api/tools":
             self._json({"available": tools_availability(), "panels": list(tools_availability())})
@@ -300,6 +337,18 @@ class ForgeHandler(BaseHTTPRequestHandler):
         store.reload()
         lock: SessionLock = state["lock"]
 
+        if path == "/api/settings":
+            saved = save_settings(self.data_dir, **body)
+            selected = get_jurisdiction(saved.get("jurisdiction"))
+            self._json(
+                {
+                    **saved,
+                    "jurisdiction_name": selected["name"],
+                    "legal": legal_reference(selected["id"]),
+                    "disclaimer": NOT_LEGAL_PROOF,
+                }
+            )
+            return
         if path == "/api/lock/set":
             lock.set_passphrase(str(body.get("passphrase") or ""))
             self._json(lock.status())
@@ -377,6 +426,9 @@ class ForgeHandler(BaseHTTPRequestHandler):
             return
         if path == "/api/filing/export":
             fmt = str(body.get("format") or "txt").lower()
+            if not body.get("jurisdiction") and not body.get("jurisdiction_id"):
+                body = dict(body)
+                body["jurisdiction"] = load_settings(self.data_dir).get("jurisdiction")
             content = render_html(body) if fmt == "html" else render_txt(body)
             export_dir = self.data_dir / "exports"
             export_dir.mkdir(parents=True, exist_ok=True)

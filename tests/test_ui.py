@@ -43,16 +43,24 @@ def test_tools_pages_do_not_500(base_url: str) -> None:
     for path in (
         "/",
         "/home",
+        "/log",
         "/incident",
         "/forensics",
         "/journal",
+        "/file",
         "/filing",
+        "/guide",
         "/tools",
         "/verify",
         "/lock",
         "/receipts",
+        "/io",
+        "/doctor",
         "/api/tools",
         "/api/meta",
+        "/api/jurisdictions",
+        "/api/guide",
+        "/api/legal",
         "/static/style.css",
         "/static/app.js",
         "/manifest.webmanifest",
@@ -104,9 +112,39 @@ def test_home_has_giant_actions(base_url: str) -> None:
     assert "Export receipt" in body
     assert "Saved a receipt for this file" in body
     assert "Try a sample" in body
-    assert "Simple" in body
-    assert "Advanced" in body
     assert "not legal proof" in body.lower()
+    for label in ("Log", "Journal", "Forensics", "File", "Guide", "Verify", "Import/Export"):
+        assert label in body
+    assert "Your state" in body
+    assert "Aziel Eliab" in body
+    assert "Horton" not in body
+    assert "Altman" not in body
+    assert "GodLock.AZ" not in body
+
+
+def test_meta_and_settings_roundtrip(base_url: str) -> None:
+    status, body = _get(base_url + "/api/meta")
+    assert status == 200
+    meta = json.loads(body)
+    assert meta["version"]
+    assert meta["jurisdiction"] == "IN"
+    assert meta["author"] == "Aziel Eliab"
+    status, cat_body = _get(base_url + "/api/jurisdictions")
+    assert status == 200
+    cat = json.loads(cat_body)
+    ids = {j["id"] for j in cat["jurisdictions"]}
+    assert len([j for j in cat["jurisdictions"] if j["kind"] == "state"]) == 50
+    assert "DC" in ids and "US" in ids
+    status, saved = _post(base_url + "/api/settings", {"jurisdiction": "TX"})
+    assert status == 200
+    assert saved["jurisdiction"] == "TX"
+    status, again = _get(base_url + "/api/settings")
+    assert json.loads(again)["jurisdiction"] == "TX"
+    status, legal_body = _get(base_url + "/api/legal")
+    legal = json.loads(legal_body)
+    assert legal["state"]["id"] == "TX"
+    assert legal["federal"]["id"] == "US"
+    assert any(b["name"] == "Troxel v. Granville" for b in legal["baseline"])
 
 
 def test_demo_saves_receipt(base_url: str) -> None:

@@ -33,8 +33,12 @@ No secrets belong in this directory.
 | GET | `/stats` | JSON totals |
 | POST | `/event` | A fork reports a download |
 
-Default asset: `forgereceipts-0.2.0.tar.gz`
+Default asset: `forgereceipts-0.3.0.tar.gz`
 GitHub: `https://github.com/AzielEliab/forgereceipts`
+
+**Remaining deploy:** build the 0.3.0 sdist/tarball, upload it as the
+Worker asset, `wrangler deploy` this Worker, and publish GitHub release
+`v0.3.0`. Until then the live Worker may still serve 0.2.0.
 
 ## Use with Grok, ChatGPT, Venice
 
