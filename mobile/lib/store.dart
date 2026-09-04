@@ -13,7 +13,7 @@ const notLegalAdvice =
     'any court. No filing. Consult a licensed attorney in your jurisdiction.';
 
 const receiptFormat = 'forgereceipts.receipt/v1';
-const productVersion = '0.2.0';
+const productVersion = '0.3.0';
 const savedPlain = 'Saved a receipt for this file';
 
 class Receipt {

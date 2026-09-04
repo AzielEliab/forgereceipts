@@ -10,22 +10,48 @@ import html
 from datetime import date
 from typing import Any
 
+from forgereceipts.jurisdictions import DEFAULT_JURISDICTION, get_jurisdiction
+
 NOT_LEGAL_ADVICE = (
     "NOT LEGAL ADVICE. This is a local template. It does not file anything. "
     "It does not talk to Odyssey or any court. Have a licensed attorney "
     "review anything you intend to file."
 )
 
-EFILING_CHECKLIST = [
+GENERIC_EFILING_CHECKLIST = [
     "Ask the clerk (yourself) whether your court accepts electronic filing and which portal it uses. This app does not connect to any portal.",
     "Confirm accepted file types, size limits, and naming rules with the clerk or the court's published instructions.",
     "Caption the motion with the correct court, county, parties, and cause number from *your* papers — not from this app.",
-    "Label exhibits: Petitioner's Exhibit 1, 2, 3… or Respondent's Exhibit A, B, C… Keep a hashed copy of each file in Forensics.",
+    "Label exhibits using this state's usual pattern (Petitioner 1/2/3 or Respondent A/B/C unless local rules differ). Keep a hashed copy of each file in Forensics.",
     "Attach a certificate of service if your rules require one. This app does not serve anyone.",
     "Check page limits, font, and margins in the local rules. This app does not know your local rules.",
     "Print or export locally. You upload or walk the papers in. ForgeReceipts never transmits them.",
-    "After you file, hash the stamped copy (Forensics) and log a receipt (Incident log). Corrections are new receipts, never edits.",
+    "After you file, hash the stamped copy (Forensics) and log a receipt (Log). Corrections are new receipts, never edits.",
 ]
+
+# Backward-compatible alias.
+EFILING_CHECKLIST = GENERIC_EFILING_CHECKLIST
+
+
+def efiling_checklist(jurisdiction: str | None = None) -> list[str]:
+    profile = get_jurisdiction(jurisdiction)
+    efile = profile["efiling"]
+    name = profile["name"]
+    first = (
+        f"{name}: {efile['name']}. {efile['note']}"
+    )
+    if efile.get("odyssey"):
+        extra = (
+            f"If your {name} court uses Odyssey, follow that portal's upload "
+            "steps yourself. This app never logs into Odyssey."
+        )
+    else:
+        extra = (
+            f"If your {name} court does not use Odyssey, follow the clerk's "
+            "generic e-filing or paper steps."
+        )
+    items = [first, extra, *GENERIC_EFILING_CHECKLIST[1:]]
+    return items
 
 
 def exhibit_labels(party: str, count: int) -> list[str]:
@@ -45,6 +71,10 @@ def exhibit_labels(party: str, count: int) -> list[str]:
             labels.append(f"Respondent's Exhibit {name}")
         return labels
     return [f"Petitioner's Exhibit {i}" for i in range(1, n + 1)]
+
+
+def default_caption_state(jurisdiction: str | None = None) -> str:
+    return get_jurisdiction(jurisdiction)["caption_state"]
 
 
 def motion_caption(
@@ -71,9 +101,12 @@ def motion_caption(
 
 
 def render_txt(fields: dict[str, Any]) -> str:
+    jid = fields.get("jurisdiction") or fields.get("jurisdiction_id")
+    profile = get_jurisdiction(jid) if jid else None
+    default_state = profile["caption_state"] if profile else "Indiana"
     exhibits = exhibit_labels(fields.get("party") or "petitioner", int(fields.get("exhibit_count") or 0))
     caption = motion_caption(
-        state=fields.get("state") or "Indiana",
+        state=fields.get("state") or default_state,
         court_name=fields.get("court_name") or "[COURT NAME]",
         petitioner=fields.get("petitioner") or "[PETITIONER]",
         respondent=fields.get("respondent") or "[RESPONDENT]",
@@ -99,7 +132,7 @@ def render_txt(fields: dict[str, Any]) -> str:
         [
             "",
             "CONCEPTUAL E-FILING CHECKLIST (this app does not file):",
-            *[f"  [ ] {item}" for item in EFILING_CHECKLIST],
+            *[f"  [ ] {item}" for item in efiling_checklist(fields.get("jurisdiction") or fields.get("jurisdiction_id"))],
             "",
             f"Exported locally on {date.today().isoformat()}. Not served. Not filed.",
         ]
@@ -123,11 +156,18 @@ def render_html(fields: dict[str, Any]) -> str:
     )
 
 
-def templates() -> dict[str, Any]:
+def templates(jurisdiction: str | None = None) -> dict[str, Any]:
+    profile = get_jurisdiction(jurisdiction or DEFAULT_JURISDICTION)
     return {
         "disclaimer": NOT_LEGAL_ADVICE,
+        "jurisdiction": {
+            "id": profile["id"],
+            "name": profile["name"],
+            "kind": profile["kind"],
+            "depth": profile["depth"],
+        },
         "caption_placeholders": {
-            "state": "Indiana",
+            "state": profile["caption_state"],
             "court_name": "[COURT NAME]",
             "petitioner": "[PETITIONER]",
             "respondent": "[RESPONDENT]",
@@ -136,11 +176,16 @@ def templates() -> dict[str, Any]:
             "title": "MOTION",
         },
         "exhibit_examples": [
-            "Petitioner's Exhibit 1",
-            "Petitioner's Exhibit 2",
-            "Respondent's Exhibit A",
-            "Respondent's Exhibit B",
+            profile["exhibit"]["petitioner"],
+            profile["exhibit"]["respondent"],
         ],
-        "efiling_checklist": list(EFILING_CHECKLIST),
-        "note": "Conceptual checklist only. ForgeReceipts never talks to Odyssey or any court.",
+        "exhibit": profile["exhibit"],
+        "efiling": profile["efiling"],
+        "efiling_checklist": efiling_checklist(profile["id"]),
+        "guidelines_label": profile["guidelines_label"],
+        "best_interests_label": profile["best_interests_label"],
+        "note": (
+            "Conceptual checklist only. ForgeReceipts never talks to Odyssey "
+            "or any court. Not legal advice."
+        ),
     }

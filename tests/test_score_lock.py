@@ -29,6 +29,9 @@ def test_pattern_strength_formula(tmp_path: Path) -> None:
     assert scored["components"]["journal_entries"] == 1
     disc = scored["disclaimer"].lower()
     assert "win probability" in disc or "not a court-win" in disc
+    assert scored["next_best_move"]["plain"]
+    assert scored["sway"]["journal"] == 1
+    assert scored["flags"]
 
 
 def test_pbkdf2_lock(tmp_path: Path) -> None:

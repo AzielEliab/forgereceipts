@@ -14,7 +14,7 @@ import { handleRuntime } from "./runtime.js";
  */
 
 const PROJECT = "forgereceipts";
-const DEFAULT_ASSET = "forgereceipts-0.2.0.tar.gz";
+const DEFAULT_ASSET = "forgereceipts-0.3.0.tar.gz";
 const DEFAULT_OWNER = "AzielEliab";
 const DEFAULT_REPO = "forgereceipts";
 const DEFAULT_BRANCH = "main";

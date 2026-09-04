@@ -54,5 +54,5 @@ Then open http://127.0.0.1:8787 (loopback only).
 DOI: https://doi.org/10.5281/zenodo.21436074  
 Record: https://zenodo.org/records/21436074  
 
-Counted download (gzip HTTP 200, no 302): https://forgereceipts-download-tracker.vibelock.workers.dev/download?asset=forgereceipts-0.2.0.tar.gz
+Counted download (gzip HTTP 200, no 302): https://forgereceipts-download-tracker.vibelock.workers.dev/download?asset=forgereceipts-0.3.0.tar.gz
 GitHub: https://github.com/AzielEliab/forgereceipts
