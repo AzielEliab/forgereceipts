@@ -19,6 +19,7 @@
   let catalog = [];
   let currentLegal = null;
   let selectedTags = [];
+  let savedJurisdiction = "IN";
 
   async function api(path, opts) {
     const res = await fetch(path, opts);
@@ -40,7 +41,7 @@
     history.replaceState(null, "", "#" + next);
   }
 
-  function fillStateSelect(filter) {
+  function fillStateSelect(filter, selected) {
     const sel = $("#state-select");
     const q = (filter || "").trim().toLowerCase();
     const groups = [
@@ -49,7 +50,7 @@
       { label: "District of Columbia", kind: "district" },
       { label: "Territories", kind: "territory" },
     ];
-    const current = sel.value;
+    const want = selected || savedJurisdiction || sel.value;
     sel.innerHTML = "";
     groups.forEach((g) => {
       const rows = catalog.filter((j) => j.kind === g.kind).filter((j) => {
@@ -63,11 +64,12 @@
         const opt = document.createElement("option");
         opt.value = j.id;
         opt.textContent = j.id === "US" ? j.name : (j.id + " — " + j.name);
+        if (j.id === want) opt.selected = true;
         og.appendChild(opt);
       });
       sel.appendChild(og);
     });
-    if ([].some.call(sel.options, (o) => o.value === current)) sel.value = current;
+    if ([].some.call(sel.options, (o) => o.value === want)) sel.value = want;
   }
 
   function receiptCard(r) {
@@ -183,7 +185,8 @@
     const name = (legal.state && legal.state.name) || (legal.jurisdiction && legal.jurisdiction.name) || "your state";
     $("#state-name").textContent = name;
     if (legal.jurisdiction && legal.jurisdiction.id) {
-      $("#state-select").value = legal.jurisdiction.id;
+      savedJurisdiction = legal.jurisdiction.id;
+      $("#state-select").value = savedJurisdiction;
     }
     renderTags(legal);
     return legal;
@@ -252,8 +255,9 @@
       body: JSON.stringify({ jurisdiction: code }),
     });
     if (saved.error) return;
+    savedJurisdiction = saved.jurisdiction || code;
     selectedTags = [];
-    await refreshLegal(saved.jurisdiction);
+    await refreshLegal(savedJurisdiction);
     await refreshFiling();
     await refreshGuide();
   }
@@ -564,9 +568,12 @@
     const cat = await api("/api/jurisdictions");
     catalog = cat.jurisdictions || [];
     const meta = await api("/api/meta");
-    fillStateSelect("");
-    if (meta.jurisdiction) $("#state-select").value = meta.jurisdiction;
-    await refreshLegal(meta.jurisdiction);
+    savedJurisdiction = meta.jurisdiction || "IN";
+    $("#state-filter").value = "";
+    fillStateSelect("", savedJurisdiction);
+    await refreshLegal(savedJurisdiction);
+    // Browser form-restore can overwrite the select after JS runs.
+    fillStateSelect("", savedJurisdiction);
     const start = MODE_ALIASES[(location.hash || "#log").replace("#", "")] || (location.hash || "#log").replace("#", "") || "log";
     show(start);
     await refreshLock();
