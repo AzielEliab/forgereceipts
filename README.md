@@ -156,7 +156,11 @@ The UI binds **127.0.0.1 only**. Self-contained CSS. No CDN.
 
 Child's Best Interests First. Integrity Over Narrative. Local Control. Always.
 
-## Use with Grok, ChatGPT, Venice
+## Use with AI assistants
+
+The hosted runtime is OpenAPI 3.1 and MCP. Any MCP- or OpenAPI-capable assistant can call it. That includes ChatGPT (GPT Actions / OpenAI), Grok (xAI), Venice, Claude (Anthropic), Cursor (MCP), Glama (MCP), Perplexity, Microsoft Copilot / Bing, Google Gemini / Vertex, Mistral, Meta AI, Apple Intelligence surfaces, Amazon Q tooling, DuckAssist, You.com, Cohere, and other MCP/OpenAPI-capable assistants.
+
+Public identity: **Aziel Eliab** only.
 
 Live HTTPS runtime on the download-tracker Worker (does **not** increment the download counter):
 
@@ -167,11 +171,11 @@ Live HTTPS runtime on the download-tracker Worker (does **not** increment the do
 
 POST /v1/receipt {note, context?}. Local-style receipt JSON. Every response banners **Not legal advice. No court filing.** Child-best-interests motto. Does not call Odyssey or any court.
 
-**ChatGPT Actions:** GPT Editor → Actions → Import from URL → `https://forgereceipts-download-tracker.vibelock.workers.dev/openapi.json` (no auth).
+**OpenAPI / GPT Actions / HTTP tools** (ChatGPT, Grok, Venice, Claude, Copilot, Gemini, Perplexity, Mistral, Meta AI, Amazon Q, DuckAssist, You.com, Cohere, and similar): import `https://forgereceipts-download-tracker.vibelock.workers.dev/openapi.json` (no auth). Or add an HTTP tool with method, URL, and JSON body from that spec. Start with GET `https://forgereceipts-download-tracker.vibelock.workers.dev/v1/health`.
 
-**Grok / xAI tools:** add an HTTP/OpenAPI tool pointing at `https://forgereceipts-download-tracker.vibelock.workers.dev/openapi.json`.
+**MCP** (Cursor, Claude, Glama, and other MCP clients): `POST https://aziel-runtime.vibelock.workers.dev/mcp`.
 
-**Venice HTTP tools:** add an HTTP tool with method, URL, and JSON body from that spec. Start with GET `https://forgereceipts-download-tracker.vibelock.workers.dev/v1/health`.
+**Apple Intelligence surfaces** and other assistants that speak OpenAPI or MCP: same OpenAPI URL or MCP catalog.
 
 ```bash
 curl -sS -X POST https://forgereceipts-download-tracker.vibelock.workers.dev/v1/receipt \

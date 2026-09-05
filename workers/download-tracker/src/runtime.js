@@ -48,6 +48,32 @@ function aiHowTo(base) {
   const openapi = base + "/openapi.json";
   const health = base + "/v1/health";
   return {
+    clients: [
+      "ChatGPT (GPT Actions / OpenAI)",
+      "Grok (xAI)",
+      "Venice",
+      "Claude (Anthropic)",
+      "Cursor (MCP)",
+      "Glama (MCP)",
+      "Perplexity",
+      "Microsoft Copilot / Bing",
+      "Google Gemini / Vertex",
+      "Mistral",
+      "Meta AI",
+      "Apple Intelligence surfaces",
+      "Amazon Q tooling",
+      "DuckAssist",
+      "You.com",
+      "Cohere",
+      "other MCP/OpenAPI-capable assistants",
+    ],
+    author: "Aziel Eliab",
+    openapi_import: [
+      "Import " + openapi + " as an OpenAPI spec, GPT Action, or custom HTTP tool",
+      "Authentication: None",
+      "Allow GET /v1/health and the listed POST /v1 routes",
+      "Test GET /v1/health, then a sample POST from the spec",
+    ],
     chatgpt_actions: [
       "Open GPT Editor → Actions → Import from URL",
       "Paste " + openapi,
@@ -65,8 +91,12 @@ function aiHowTo(base) {
       "Start with GET " + health,
       "Then call the product POST listed in the spec",
     ],
+    mcp: [
+      "Cursor, Claude, Glama, and other MCP clients: POST https://aziel-runtime.vibelock.workers.dev/mcp",
+    ],
     mcp_catalog: "https://aziel-runtime.vibelock.workers.dev/mcp",
     notes: [
+      "Any MCP- or OpenAPI-capable assistant can call this runtime. The list above is not exclusive.",
       "GET /download still serves the gzip tarball and increments the counter.",
       "/v1, /openapi.json, and /ai do not increment DOWNLOADS.",
     ],
@@ -74,7 +104,7 @@ function aiHowTo(base) {
 }
 
 const PRODUCT = "forgereceipts";
-const SKILL_MARKDOWN = "---\nname: ForgeReceipts\ndescription: Use when calling ForgeReceipts hosted /v1 or installing the local package. Author Aziel Eliab.\n---\n\n# ForgeReceipts\n\nLocal-first evidence integrity packaging. Not legal advice. Does not contact courts, Odyssey, email, or any cloud service. No telemetry. Author: Aziel Eliab.\n\n**THIS IS:** a local-first evidence integrity platform that packages receipts. Hosted /v1 never stores files.\n\n**THIS IS NOT:** legal advice, a court filing, counsel, Odyssey/email/cloud contact, or a guarantee of any court outcome.\n\nAuthor: **Aziel Eliab**. Forks are welcome and always allowed. Apache-2.0.\n\nAlways send `User-Agent: Mozilla/5.0`. Cloudflare Workers may 403 an empty agent.\n\n## Call these URLs\n\n- Worker OpenAPI: https://forgereceipts-download-tracker.vibelock.workers.dev/openapi.json\n- Catalog OpenAPI: https://aziel-runtime.vibelock.workers.dev/openapi.json\n- MCP: `POST https://aziel-runtime.vibelock.workers.dev/mcp`\n- Live skill (this markdown): `GET https://forgereceipts-download-tracker.vibelock.workers.dev/v1/skill`\n\nOps (do **not** increment downloads or views):\n\n| Method | Path | What |\n|--------|------|------|\n| GET | `/v1/health` | Liveness. Does not increment downloads. |\n| GET | `/v1/skill` | This markdown. Does not increment downloads. |\n| POST | `/v1/receipt` | Preview a local receipt hash. Hosted never stores files. |\n\nGrok: import OpenAPI as a custom tool. ChatGPT: GPT Actions. Venice: HTTP tools.\n\n## Example\n\n```bash\ncurl -s -A 'Mozilla/5.0' https://forgereceipts-download-tracker.vibelock.workers.dev/v1/health\ncurl -s -A 'Mozilla/5.0' https://forgereceipts-download-tracker.vibelock.workers.dev/v1/skill\ncurl -s -A 'Mozilla/5.0' -X POST https://forgereceipts-download-tracker.vibelock.workers.dev/v1/receipt \\\n  -H 'content-type: application/json' \\\n  -d '{\"sha256\":\"0\"}'\n```\n\n## Local (after one-click install)\n\n```bash\ncurl -fsSL https://forgereceipts-download-tracker.vibelock.workers.dev/install.sh | bash\nforgereceipts ui\n```\n\nThen open http://127.0.0.1:8787 (loopback only).\n\nDOI: https://doi.org/10.5281/zenodo.21436074  \nRecord: https://zenodo.org/records/21436074  \n\nCounted download (gzip HTTP 200, no 302): https://forgereceipts-download-tracker.vibelock.workers.dev/download?asset=forgereceipts-0.3.0.tar.gz\nGitHub: https://github.com/AzielEliab/forgereceipts\n";
+const SKILL_MARKDOWN = "---\nname: ForgeReceipts\ndescription: Use when calling ForgeReceipts hosted /v1 or installing the local package. Author Aziel Eliab.\n---\n\n# ForgeReceipts\n\nLocal-first evidence integrity packaging. Not legal advice. Does not contact courts, Odyssey, email, or any cloud service. No telemetry. Author: Aziel Eliab.\n\n**THIS IS:** a local-first evidence integrity platform that packages receipts. Hosted /v1 never stores files.\n\n**THIS IS NOT:** legal advice, a court filing, counsel, Odyssey/email/cloud contact, or a guarantee of any court outcome.\n\nAuthor: **Aziel Eliab**. Forks are welcome and always allowed. Apache-2.0.\n\nAlways send `User-Agent: Mozilla/5.0`. Cloudflare Workers may 403 an empty agent.\n\n## Call these URLs\n\n- Worker OpenAPI: https://forgereceipts-download-tracker.vibelock.workers.dev/openapi.json\n- Catalog OpenAPI: https://aziel-runtime.vibelock.workers.dev/openapi.json\n- MCP: `POST https://aziel-runtime.vibelock.workers.dev/mcp`\n- Live skill (this markdown): `GET https://forgereceipts-download-tracker.vibelock.workers.dev/v1/skill`\n\nOps (do **not** increment downloads or views):\n\n| Method | Path | What |\n|--------|------|------|\n| GET | `/v1/health` | Liveness. Does not increment downloads. |\n| GET | `/v1/skill` | This markdown. Does not increment downloads. |\n| POST | `/v1/receipt` | Preview a local receipt hash. Hosted never stores files. |\n\nWorks with ChatGPT (GPT Actions / OpenAI), Grok (xAI), Venice, Claude (Anthropic), Cursor (MCP), Glama (MCP), Perplexity, Microsoft Copilot / Bing, Google Gemini / Vertex, Mistral, Meta AI, Apple Intelligence surfaces, Amazon Q tooling, DuckAssist, You.com, Cohere, and other MCP/OpenAPI-capable assistants. Import the OpenAPI spec, add HTTP tools, or connect via MCP. Public identity: Aziel Eliab only.\n\n## Example\n\n```bash\ncurl -s -A 'Mozilla/5.0' https://forgereceipts-download-tracker.vibelock.workers.dev/v1/health\ncurl -s -A 'Mozilla/5.0' https://forgereceipts-download-tracker.vibelock.workers.dev/v1/skill\ncurl -s -A 'Mozilla/5.0' -X POST https://forgereceipts-download-tracker.vibelock.workers.dev/v1/receipt \\\n  -H 'content-type: application/json' \\\n  -d '{\"sha256\":\"0\"}'\n```\n\n## Local (after one-click install)\n\n```bash\ncurl -fsSL https://forgereceipts-download-tracker.vibelock.workers.dev/install.sh | bash\nforgereceipts ui\n```\n\nThen open http://127.0.0.1:8787 (loopback only).\n\nDOI: https://doi.org/10.5281/zenodo.21436074  \nRecord: https://zenodo.org/records/21436074  \n\nCounted download (gzip HTTP 200, no 302): https://forgereceipts-download-tracker.vibelock.workers.dev/download?asset=forgereceipts-0.3.0.tar.gz\nGitHub: https://github.com/AzielEliab/forgereceipts\n";
 
 const VERSION = "0.3.0";
 const BASE = "https://forgereceipts-download-tracker.vibelock.workers.dev";
@@ -223,7 +253,7 @@ export async function handleRuntime(request, url, env) {
   if (path === "/openapi.json" && request.method === "GET") return runtimeJson(openapiDoc());
   if (path === "/ai" && request.method === "GET") {
     return runtimeJson(withBanner({
-      product: PRODUCT, title: "Use with Grok, ChatGPT, Venice",
+      product: PRODUCT, title: "Use with AI assistants",
       openapi: BASE + "/openapi.json", health: BASE + "/v1/health", ...aiHowTo(BASE),
     }));
   }
