@@ -6,6 +6,7 @@ import { handleRuntime } from "./runtime.js";
  * GET  /download?repo=AzielEliab/forgereceipts&tag=latest&asset=...
  *      increments KV, 302 to the GitHub release asset
  *      (default https://github.com/AzielEliab/forgereceipts/releases)
+ * GET  /count   JSON {project, views, downloads, total} — total = downloads (azhub convention)
  * GET  /stats   JSON totals + per-repo + per-branch breakdown
  * POST /event   forks report a download {owner,repo,branch,fork,asset}
  *
@@ -140,6 +141,7 @@ async function collectStats(env) {
 
   for (const k of keys) {
     const name = k.name;
+    if (name === viewsKey()) continue;
     const n = parseInt((await env.DOWNLOADS.get(name)) || "0", 10);
     if (!Number.isFinite(n) || n <= 0) continue;
     const parts = name.split("|");
@@ -154,14 +156,18 @@ async function collectStats(env) {
     breakdown.push({ project, owner, repo, branch, fork: forkFlag, count: n });
   }
 
+  const views = parseInt((await env.DOWNLOADS.get(viewsKey())) || "0", 10) || 0;
+  const shown = total;
   return {
     project: PROJECT,
-    total,
+    total: shown,
+    views,
+    downloads: shown,
     by_repo,
     by_branch,
     by_fork,
     breakdown,
-    note: "Forks identified by GitHub owner/repo. Key layout: project|owner|repo|branch|fork",
+    note: "Forks identified by GitHub owner/repo. Key layout: project|owner|repo|branch|fork. Views are separate from downloads. /v1 does not increment.",
   };
 }
 
@@ -389,7 +395,12 @@ export default {
 
     if (url.pathname === "/count" && request.method === "GET") {
       const stats = await collectStats(env);
-      return json({ project: PROJECT, total: stats.total || 0 });
+      return json({
+        project: PROJECT,
+        views: stats.views || 0,
+        downloads: stats.downloads || 0,
+        total: stats.total || 0,
+      });
     }
 
     if (url.pathname === "/stats" && request.method === "GET") {
