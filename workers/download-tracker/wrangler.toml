@@ -8,7 +8,17 @@ account_id = "ac575a9b822bea2bed97d0ab73aed238"
 binding = "DOWNLOADS"
 id = "a40597120bcf4e1d9b26d0c4a1b2f05d"
 
+[vars]
+AZIEL_RUNTIME_ORIGIN = "https://aziel-runtime.vibelock.workers.dev"
+
+# Worker→Worker public fetch of the runtime origin can return HTML/404.
+# Proxy /v1/mesh/* via env.AZIEL_RUNTIME.fetch. HTTP fallback only when unbound.
+[[services]]
+binding = "AZIEL_RUNTIME"
+service = "aziel-runtime"
+
 [assets]
 directory = "./public"
 binding = "ASSETS"
+# /v1/* covers /v1/mesh/* (AZIEL_RUNTIME proxy) and local /v1/{op}.
 run_worker_first = ["/install.sh", "/", "/count", "/download", "/download/*", "/stats", "/event", "/go", "/v1", "/v1/*", "/openapi.json", "/ai", "/robots.txt", "/sitemap.xml", "/cite.json"]

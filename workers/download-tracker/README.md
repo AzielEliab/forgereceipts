@@ -24,6 +24,7 @@ No secrets belong in this directory.
 | Binding     | Type | Purpose |
 |-------------|------|---------|
 | `DOWNLOADS` | KV   | Counters keyed `project|owner|repo|branch|fork` |
+| `AZIEL_RUNTIME` | service | Suite mesh `/v1/mesh/*` PROXY to Worker `aziel-runtime` |
 
 ## Routes
 
@@ -52,6 +53,12 @@ This Worker also hosts the product runtime API (CORS `*`). `/v1` routes do **not
 | GET | `/v1/health` | Liveness |
 | GET | `/openapi.json` | OpenAPI 3.1 |
 | GET | `/ai` | How to wire any MCP/OpenAPI-capable assistant; MCP catalog |
+| GET | `/v1/mesh` | PROXY suite mesh status. Default OFF. Never enables. |
+| GET | `/v1/mesh/status` | PROXY alias. MESH-OK + `enabled:false` by default. |
+| GET | `/v1/mesh/nodes` | PROXY Live Nodes roster |
+| POST | `/v1/mesh/{enable,disable,join,heartbeat,leave,broadcast}` | PROXY. Bearer required to enable. |
+
+`/v1/mesh/*` PROXY to aziel-runtime suite mesh (`AZIEL_RUNTIME`). Default OFF. QNM-BUILD-1.0 live|locked|isolated. No Node Gate. No auto-heal. Not anonymity. Human UI Live Nodes strip polls `GET /v1/mesh`. Not a Softwares product for anon-broadcast. Not legal advice.
 
 See the product README section **Use with AI assistants**.
 OpenAPI: https://forgereceipts-download-tracker.vibelock.workers.dev/openapi.json
