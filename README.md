@@ -41,7 +41,8 @@ The Worker serves the gzip itself (HTTP 200, no 302 to GitHub).
 Direct tarball (also counted):
 [forgereceipts-0.3.0.tar.gz](https://forgereceipts-download-tracker.vibelock.workers.dev/download?asset=forgereceipts-0.3.0.tar.gz)
 
-- Live count JSON: [https://forgereceipts-download-tracker.vibelock.workers.dev/stats](https://forgereceipts-download-tracker.vibelock.workers.dev/stats)
+- Live count JSON (`{project, views, downloads, total}`): [https://forgereceipts-download-tracker.vibelock.workers.dev/count](https://forgereceipts-download-tracker.vibelock.workers.dev/count)
+- Stats: [https://forgereceipts-download-tracker.vibelock.workers.dev/stats](https://forgereceipts-download-tracker.vibelock.workers.dev/stats)
 - OpenAPI: [https://forgereceipts-download-tracker.vibelock.workers.dev/openapi.json](https://forgereceipts-download-tracker.vibelock.workers.dev/openapi.json)
 - Skill: [https://forgereceipts-download-tracker.vibelock.workers.dev/v1/skill](https://forgereceipts-download-tracker.vibelock.workers.dev/v1/skill)
 - One-click install: [https://forgereceipts-download-tracker.vibelock.workers.dev/install.sh](https://forgereceipts-download-tracker.vibelock.workers.dev/install.sh)
@@ -101,7 +102,7 @@ MirageGrid are engines inside this tree, not separate downloads.
 
 Direct tarball (also counted): [forgereceipts-0.3.0.tar.gz](https://forgereceipts-download-tracker.vibelock.workers.dev/download?asset=forgereceipts-0.3.0.tar.gz)
 
-- Live count JSON: [https://forgereceipts-download-tracker.vibelock.workers.dev/count](https://forgereceipts-download-tracker.vibelock.workers.dev/count)
+- Live count JSON (`{project, views, downloads, total}`): [https://forgereceipts-download-tracker.vibelock.workers.dev/count](https://forgereceipts-download-tracker.vibelock.workers.dev/count)
 - GitHub: [https://github.com/AzielEliab/forgereceipts](https://github.com/AzielEliab/forgereceipts)
 
 ---

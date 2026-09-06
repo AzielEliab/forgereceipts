@@ -9,8 +9,10 @@ repository, other branches, and forks. Forks are identified by GitHub
 Worker name: `forgereceipts-download-tracker`
 Intended URL: `https://forgereceipts-download-tracker.vibelock.workers.dev/`
 
-The homepage is async `indexHtml` with a live count. `GET /count`
-returns JSON. The download button shows `${n} counted`.
+The homepage is async `indexHtml` with a live count. GET `/` increments
+**page-views**. GET `/download` increments **downloads**. `GET /count`
+returns `{project, views, downloads, total}` (azhub convention: `total` = downloads).
+The download button shows `${n} counted`.
 
 **Do not deploy wrangler from this tree until KV is a real id.**
 `wrangler.toml` ships `id = "REPLACE_ME"`. Account id is set.
@@ -27,9 +29,9 @@ No secrets belong in this directory.
 
 | Method | Path | Behavior |
 |--------|------|----------|
-| GET | `/` | Index with live count and download button (`${n} counted`) |
-| GET | `/count` | `{ project, total }` |
-| GET | `/download?asset=` | Increment KV, **200 gzip** of the hosted tarball |
+| GET | `/` | Index with live count and download button (`${n} counted`). Increments views. |
+| GET | `/count` | `{ project, views, downloads, total }` (`total` = downloads) |
+| GET | `/download?asset=` | Increment downloads KV, **200 gzip** of the hosted tarball |
 | GET | `/stats` | JSON totals |
 | POST | `/event` | A fork reports a download |
 
