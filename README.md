@@ -78,11 +78,11 @@ Check a saved receipt file: `forgereceipts verify-receipt path/to/receipt.json`
 
 Counted download: [https://forgereceipts-download-tracker.vibelock.workers.dev/](https://forgereceipts-download-tracker.vibelock.workers.dev/)
 
-**Ship note (0.3.0):** this tree is versioned 0.3.0. The live Worker still
-serves 0.2.0 until someone builds `forgereceipts-0.3.0.tar.gz`, hosts it
-on the Worker assets binding, deploys `workers/download-tracker`, and
-cuts a GitHub release. `/v1` on the Worker does not store files and is
-not a court filing.
+**Ship note (0.3.0):** this tree is versioned 0.3.0. The Worker hosts
+`workers/download-tracker/public/forgereceipts-0.3.0.tar.gz` as
+`DEFAULT_ASSET`. Remaining: deploy `workers/download-tracker` and cut
+GitHub release `v0.3.0`. `/v1` on the Worker does not store files and
+is not a court filing.
 
 
 
