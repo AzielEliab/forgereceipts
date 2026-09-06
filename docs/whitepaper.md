@@ -198,7 +198,10 @@ selector label. Consult an attorney. Not legal advice.
 
 - Not legal advice, no outcome guarantees
 - No contacting courts, Odyssey, email, or cloud
-- No real anonymity network
+- No real anonymity network. Hosted suite mesh (`/v1/mesh/*`) is a
+  QNM-BUILD-1.0 rollup proxy (default OFF; live|locked|isolated counts
+  only). It is not a Node Gate, login mesh, or anonymity network. Full
+  node process is local `qnm-node/`. Anon-broadcast is not a publish path.
 - No CSAM, no targeting minors; Time with Child is the user's own
   parenting documentation
 - Passphrase: `hashlib.pbkdf2_hmac` (SHA-256, 200_000 iterations).

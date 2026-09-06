@@ -45,6 +45,7 @@ Direct tarball (also counted):
 - Stats: [https://forgereceipts-download-tracker.vibelock.workers.dev/stats](https://forgereceipts-download-tracker.vibelock.workers.dev/stats)
 - OpenAPI: [https://forgereceipts-download-tracker.vibelock.workers.dev/openapi.json](https://forgereceipts-download-tracker.vibelock.workers.dev/openapi.json)
 - Skill: [https://forgereceipts-download-tracker.vibelock.workers.dev/v1/skill](https://forgereceipts-download-tracker.vibelock.workers.dev/v1/skill)
+- Suite mesh proxy: [https://forgereceipts-download-tracker.vibelock.workers.dev/v1/mesh](https://forgereceipts-download-tracker.vibelock.workers.dev/v1/mesh) — default OFF; QNM live / locked / isolated
 - One-click install: [https://forgereceipts-download-tracker.vibelock.workers.dev/install.sh](https://forgereceipts-download-tracker.vibelock.workers.dev/install.sh)
 - GitHub: [https://github.com/AzielEliab/forgereceipts](https://github.com/AzielEliab/forgereceipts)
 
@@ -169,12 +170,13 @@ Live HTTPS runtime on the download-tracker Worker (does **not** increment the do
 - Health: https://forgereceipts-download-tracker.vibelock.workers.dev/v1/health
 - How to wire tools: https://forgereceipts-download-tracker.vibelock.workers.dev/ai
 - MCP catalog: https://aziel-runtime.vibelock.workers.dev/mcp
+- Suite mesh: https://forgereceipts-download-tracker.vibelock.workers.dev/v1/mesh (PROXY; default OFF)
 
 POST /v1/receipt {note, context?}. Local-style receipt JSON. Every response banners **Not legal advice. No court filing.** Child-best-interests motto. Does not call Odyssey or any court.
 
 **OpenAPI / GPT Actions / HTTP tools** (ChatGPT, Grok, Venice, Claude, Copilot, Gemini, Perplexity, Mistral, Meta AI, Amazon Q, DuckAssist, You.com, Cohere, and similar): import `https://forgereceipts-download-tracker.vibelock.workers.dev/openapi.json` (no auth). Or add an HTTP tool with method, URL, and JSON body from that spec. Start with GET `https://forgereceipts-download-tracker.vibelock.workers.dev/v1/health`.
 
-**MCP** (Cursor, Claude, Glama, and other MCP clients): `POST https://aziel-runtime.vibelock.workers.dev/mcp`.
+**MCP** (Cursor, Claude, Glama, and other MCP clients): `POST https://aziel-runtime.vibelock.workers.dev/mcp`. Catalog MCP `mesh_*` + FragGate `slug=mesh`. This Worker `/v1/mesh/*` PROXY via `AZIEL_RUNTIME`. Suite mesh default OFF. QNM-BUILD-1.0 live|locked|isolated. No Node Gate. No auto-heal. Not anonymity. Anon-broadcast is not a publish path. Worker homepage includes the Live Nodes strip.
 
 **Apple Intelligence surfaces** and other assistants that speak OpenAPI or MCP: same OpenAPI URL or MCP catalog.
 

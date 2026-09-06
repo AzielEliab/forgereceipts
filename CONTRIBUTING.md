@@ -44,6 +44,10 @@ Python 3.10+. Core is stdlib. pytest is the dev extra. No network.
    submodule sibling repos. Do not give engines their own download
    counters inside this product.
 8. New behavior needs a test that fails without the change.
+9. **Suite mesh.** `/v1/mesh/*` PROXY to aziel-runtime via `AZIEL_RUNTIME`.
+   Default OFF. QNM rollup live|locked|isolated. No Node Gate. No
+   auto-heal. Not anonymity. Not a Softwares product for anon-broadcast.
+   Enabling requires a declared bearer. Identity: Aziel Eliab only.
 
 ## License of contributions
 

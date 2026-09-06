@@ -1,6 +1,6 @@
 ---
 name: ForgeReceipts
-description: Use when calling ForgeReceipts hosted /v1 or installing the local package. Author Aziel Eliab.
+description: Use when calling ForgeReceipts hosted /v1 or installing the local package. This Worker /v1/mesh/* PROXY to aziel-runtime via AZIEL_RUNTIME. Suite mesh default OFF. QNM-BUILD-1.0 live|locked|isolated. No Node Gate. No auto-heal. Not anonymity. Author Aziel Eliab.
 ---
 
 # ForgeReceipts
@@ -28,15 +28,21 @@ Ops (do **not** increment downloads or views):
 |--------|------|------|
 | GET | `/v1/health` | Liveness. Does not increment downloads. |
 | GET | `/v1/skill` | This markdown. Does not increment downloads. |
+| GET | `/v1/mesh` | PROXY suite mesh status. Default OFF. QNM live\|locked\|isolated. Never enables. |
+| GET | `/v1/mesh/status` | PROXY alias of GET /v1/mesh. MESH-OK + enabled:false by default. |
+| GET | `/v1/mesh/nodes` | PROXY Live Nodes roster (5-minute presence). |
+| POST | `/v1/mesh/{enable,disable,join,heartbeat,leave,broadcast}` | PROXY. Bearer required to enable. No auto-heal. Anon-broadcast is not a publish path. |
 | POST | `/v1/receipt` | Preview a local receipt hash. Hosted never stores files. |
 
-Works with ChatGPT (GPT Actions / OpenAI), Grok (xAI), Venice, Claude (Anthropic), Cursor (MCP), Glama (MCP), Perplexity, Microsoft Copilot / Bing, Google Gemini / Vertex, Mistral, Meta AI, Apple Intelligence surfaces, Amazon Q tooling, DuckAssist, You.com, Cohere, and other MCP/OpenAPI-capable assistants. Import the OpenAPI spec, add HTTP tools, or connect via MCP. Public identity: Aziel Eliab only.
+Works with ChatGPT (GPT Actions / OpenAI), Grok (xAI), Venice, Claude (Anthropic), Cursor (MCP), Glama (MCP), Perplexity, Microsoft Copilot / Bing, Google Gemini / Vertex, Mistral, Meta AI, Apple Intelligence surfaces, Amazon Q tooling, DuckAssist, You.com, Cohere, and other MCP/OpenAPI-capable assistants. Import the OpenAPI spec, add HTTP tools, or connect via MCP. Public identity: Aziel Eliab only. This Worker `/v1/mesh/*` PROXY to aziel-runtime via AZIEL_RUNTIME. Catalog MCP `mesh_*` + FragGate `slug=mesh`. Suite mesh default OFF. QNM-BUILD-1.0 live|locked|isolated. No Node Gate. No auto-heal. Not anonymity. Not legal advice.
 
 ## Example
 
 ```bash
 curl -s -A 'Mozilla/5.0' https://forgereceipts-download-tracker.vibelock.workers.dev/v1/health
 curl -s -A 'Mozilla/5.0' https://forgereceipts-download-tracker.vibelock.workers.dev/v1/skill
+curl -s -A 'Mozilla/5.0' https://forgereceipts-download-tracker.vibelock.workers.dev/v1/mesh
+curl -s -A 'Mozilla/5.0' https://forgereceipts-download-tracker.vibelock.workers.dev/v1/mesh/status
 curl -s -A 'Mozilla/5.0' -X POST https://forgereceipts-download-tracker.vibelock.workers.dev/v1/receipt \
   -H 'content-type: application/json' \
   -d '{"sha256":"0"}'

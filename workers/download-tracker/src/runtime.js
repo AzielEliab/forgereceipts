@@ -1,7 +1,9 @@
 /**
  * ForgeReceipts hosted runtime (Cloudflare Worker).
  * Local-style receipt JSON. Not legal advice. No court filing. Does not call Odyssey.
+ * /v1/mesh/* is handled by mesh.js (PROXY to aziel-runtime via AZIEL_RUNTIME).
  */
+import { meshOpenApiPaths, meshPointer } from "./mesh.js";
 function runtimeCors() {
   return {
     "Access-Control-Allow-Origin": "*",
@@ -104,7 +106,7 @@ function aiHowTo(base) {
 }
 
 const PRODUCT = "forgereceipts";
-const SKILL_MARKDOWN = "---\nname: ForgeReceipts\ndescription: Use when calling ForgeReceipts hosted /v1 or installing the local package. Author Aziel Eliab.\n---\n\n# ForgeReceipts\n\nLocal-first evidence integrity packaging. Not legal advice. Does not contact courts, Odyssey, email, or any cloud service. No telemetry. Author: Aziel Eliab.\n\n**THIS IS:** a local-first evidence integrity platform that packages receipts. Hosted /v1 never stores files.\n\n**THIS IS NOT:** legal advice, a court filing, counsel, Odyssey/email/cloud contact, or a guarantee of any court outcome.\n\nAuthor: **Aziel Eliab**. Forks are welcome and always allowed. Apache-2.0.\n\nAlways send `User-Agent: Mozilla/5.0`. Cloudflare Workers may 403 an empty agent.\n\n## Call these URLs\n\n- Worker OpenAPI: https://forgereceipts-download-tracker.vibelock.workers.dev/openapi.json\n- Catalog OpenAPI: https://aziel-runtime.vibelock.workers.dev/openapi.json\n- MCP: `POST https://aziel-runtime.vibelock.workers.dev/mcp`\n- Live skill (this markdown): `GET https://forgereceipts-download-tracker.vibelock.workers.dev/v1/skill`\n\nOps (do **not** increment downloads or views):\n\n| Method | Path | What |\n|--------|------|------|\n| GET | `/v1/health` | Liveness. Does not increment downloads. |\n| GET | `/v1/skill` | This markdown. Does not increment downloads. |\n| POST | `/v1/receipt` | Preview a local receipt hash. Hosted never stores files. |\n\nWorks with ChatGPT (GPT Actions / OpenAI), Grok (xAI), Venice, Claude (Anthropic), Cursor (MCP), Glama (MCP), Perplexity, Microsoft Copilot / Bing, Google Gemini / Vertex, Mistral, Meta AI, Apple Intelligence surfaces, Amazon Q tooling, DuckAssist, You.com, Cohere, and other MCP/OpenAPI-capable assistants. Import the OpenAPI spec, add HTTP tools, or connect via MCP. Public identity: Aziel Eliab only.\n\n## Example\n\n```bash\ncurl -s -A 'Mozilla/5.0' https://forgereceipts-download-tracker.vibelock.workers.dev/v1/health\ncurl -s -A 'Mozilla/5.0' https://forgereceipts-download-tracker.vibelock.workers.dev/v1/skill\ncurl -s -A 'Mozilla/5.0' -X POST https://forgereceipts-download-tracker.vibelock.workers.dev/v1/receipt \\\n  -H 'content-type: application/json' \\\n  -d '{\"sha256\":\"0\"}'\n```\n\n## Local (after one-click install)\n\n```bash\ncurl -fsSL https://forgereceipts-download-tracker.vibelock.workers.dev/install.sh | bash\nforgereceipts ui\n```\n\nThen open http://127.0.0.1:8787 (loopback only).\n\nDOI: https://doi.org/10.5281/zenodo.21436074  \nRecord: https://zenodo.org/records/21436074  \n\nCounted download (gzip HTTP 200, no 302): https://forgereceipts-download-tracker.vibelock.workers.dev/download?asset=forgereceipts-0.3.0.tar.gz\nGitHub: https://github.com/AzielEliab/forgereceipts\n";
+const SKILL_MARKDOWN = "---\nname: ForgeReceipts\ndescription: Use when calling ForgeReceipts hosted /v1 or installing the local package. This Worker /v1/mesh/* PROXY to aziel-runtime via AZIEL_RUNTIME. Suite mesh default OFF. QNM-BUILD-1.0 live|locked|isolated. No Node Gate. No auto-heal. Not anonymity. Author Aziel Eliab.\n---\n\n# ForgeReceipts\n\nLocal-first evidence integrity packaging. Not legal advice. Does not contact courts, Odyssey, email, or any cloud service. No telemetry. Author: Aziel Eliab.\n\n**THIS IS:** a local-first evidence integrity platform that packages receipts. Hosted /v1 never stores files.\n\n**THIS IS NOT:** legal advice, a court filing, counsel, Odyssey/email/cloud contact, or a guarantee of any court outcome.\n\nAuthor: **Aziel Eliab**. Forks are welcome and always allowed. Apache-2.0.\n\nAlways send `User-Agent: Mozilla/5.0`. Cloudflare Workers may 403 an empty agent.\n\n## Call these URLs\n\n- Worker OpenAPI: https://forgereceipts-download-tracker.vibelock.workers.dev/openapi.json\n- Catalog OpenAPI: https://aziel-runtime.vibelock.workers.dev/openapi.json\n- MCP: `POST https://aziel-runtime.vibelock.workers.dev/mcp`\n- Live skill (this markdown): `GET https://forgereceipts-download-tracker.vibelock.workers.dev/v1/skill`\n\nOps (do **not** increment downloads or views):\n\n| Method | Path | What |\n|--------|------|------|\n| GET | `/v1/health` | Liveness. Does not increment downloads. |\n| GET | `/v1/skill` | This markdown. Does not increment downloads. |\n| GET | `/v1/mesh` | PROXY suite mesh status. Default OFF. QNM live\\|locked\\|isolated. Never enables. |\n| GET | `/v1/mesh/status` | PROXY alias of GET /v1/mesh. MESH-OK + enabled:false by default. |\n| GET | `/v1/mesh/nodes` | PROXY Live Nodes roster (5-minute presence). |\n| POST | `/v1/mesh/{enable,disable,join,heartbeat,leave,broadcast}` | PROXY. Bearer required to enable. No auto-heal. Anon-broadcast is not a publish path. |\n| POST | `/v1/receipt` | Preview a local receipt hash. Hosted never stores files. |\n\nWorks with ChatGPT (GPT Actions / OpenAI), Grok (xAI), Venice, Claude (Anthropic), Cursor (MCP), Glama (MCP), Perplexity, Microsoft Copilot / Bing, Google Gemini / Vertex, Mistral, Meta AI, Apple Intelligence surfaces, Amazon Q tooling, DuckAssist, You.com, Cohere, and other MCP/OpenAPI-capable assistants. Import the OpenAPI spec, add HTTP tools, or connect via MCP. Public identity: Aziel Eliab only. This Worker `/v1/mesh/*` PROXY to aziel-runtime via AZIEL_RUNTIME. Catalog MCP `mesh_*` + FragGate `slug=mesh`. Suite mesh default OFF. QNM-BUILD-1.0 live|locked|isolated. No Node Gate. No auto-heal. Not anonymity. Not legal advice.\n\n## Example\n\n```bash\ncurl -s -A 'Mozilla/5.0' https://forgereceipts-download-tracker.vibelock.workers.dev/v1/health\ncurl -s -A 'Mozilla/5.0' https://forgereceipts-download-tracker.vibelock.workers.dev/v1/skill\ncurl -s -A 'Mozilla/5.0' https://forgereceipts-download-tracker.vibelock.workers.dev/v1/mesh\ncurl -s -A 'Mozilla/5.0' https://forgereceipts-download-tracker.vibelock.workers.dev/v1/mesh/status\ncurl -s -A 'Mozilla/5.0' -X POST https://forgereceipts-download-tracker.vibelock.workers.dev/v1/receipt \\\n  -H 'content-type: application/json' \\\n  -d '{\"sha256\":\"0\"}'\n```\n\n## Local (after one-click install)\n\n```bash\ncurl -fsSL https://forgereceipts-download-tracker.vibelock.workers.dev/install.sh | bash\nforgereceipts ui\n```\n\nThen open http://127.0.0.1:8787 (loopback only).\n\nDOI: https://doi.org/10.5281/zenodo.21436074  \nRecord: https://zenodo.org/records/21436074  \n\nCounted download (gzip HTTP 200, no 302): https://forgereceipts-download-tracker.vibelock.workers.dev/download?asset=forgereceipts-0.3.0.tar.gz\nGitHub: https://github.com/AzielEliab/forgereceipts\n";
 
 const VERSION = "0.3.0";
 const BASE = "https://forgereceipts-download-tracker.vibelock.workers.dev";
@@ -162,11 +164,12 @@ function openapiDoc() {
       title: "ForgeReceipts Runtime API",
       version: VERSION,
       summary: MOTTO,
-      description: BANNER + " Does not contact Odyssey or any court.",
+      description: BANNER + " Does not contact Odyssey or any court. Suite mesh /v1/mesh/* PROXY to aziel-runtime (AZIEL_RUNTIME). Default OFF. QNM-BUILD-1.0 live|locked|isolated. No Node Gate. No auto-heal. Not anonymity. Aziel Eliab only.",
     },
     servers: [{ url: BASE }],
     paths: {
       "/v1/health": { get: { operationId: "forgereceiptsHealth", summary: "Liveness", responses: { "200": { description: "OK" } } } },
+      ...meshOpenApiPaths(),
       "/v1/receipt": {
         post: {
           operationId: "forgereceiptsReceipt",
@@ -234,8 +237,15 @@ async function handleReceipt(body) {
 
 export async function handleRuntime(request, url, env) {
   const path = url.pathname;
+  if (path === "/v1/mesh" || path.startsWith("/v1/mesh/")) return null;
   if (path === "/v1/health" && request.method === "GET") {
-    return runtimeJson(withBanner({ ok: true, product: PRODUCT, version: VERSION }));
+    return runtimeJson(withBanner({
+      ok: true,
+      product: PRODUCT,
+      version: VERSION,
+      mesh: meshPointer(),
+      note: "Hosted /v1 does not store files. Suite mesh /v1/mesh/* PROXY to aziel-runtime. Default OFF. QNM-BUILD-1.0 live|locked|isolated. No Node Gate. No auto-heal. Not anonymity.",
+    }));
   }
 
   if (path === "/v1/skill" && request.method === "GET") {
@@ -254,11 +264,15 @@ export async function handleRuntime(request, url, env) {
   if (path === "/ai" && request.method === "GET") {
     return runtimeJson(withBanner({
       product: PRODUCT, title: "Use with AI assistants",
-      openapi: BASE + "/openapi.json", health: BASE + "/v1/health", ...aiHowTo(BASE),
+      openapi: BASE + "/openapi.json", health: BASE + "/v1/health", mesh: meshPointer(), ...aiHowTo(BASE),
     }));
   }
   if (path === "/v1" && request.method === "GET") {
-    return runtimeJson(withBanner({ product: PRODUCT, endpoints: ["GET /v1/health", "POST /v1/receipt", "GET /openapi.json", "GET /ai"] }));
+    return runtimeJson(withBanner({
+      product: PRODUCT,
+      endpoints: ["GET /v1/health", "POST /v1/receipt", "GET /v1/mesh", "GET /v1/mesh/status", "GET /openapi.json", "GET /ai"],
+      mesh: meshPointer(),
+    }));
   }
   if (path === "/v1/receipt" && request.method === "POST") {
     let body = {};
