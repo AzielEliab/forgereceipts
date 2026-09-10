@@ -58,7 +58,7 @@ This Worker also hosts the product runtime API (CORS `*`). `/v1` routes do **not
 | GET | `/v1/mesh/nodes` | PROXY Live Nodes roster |
 | POST | `/v1/mesh/{enable,disable,join,heartbeat,leave,broadcast}` | PROXY. Bearer required to enable. |
 
-`/v1/mesh/*` PROXY to aziel-runtime suite mesh (`AZIEL_RUNTIME`). Default OFF. QNM-BUILD-1.0 live|locked|isolated. No Node Gate. No auto-heal. Not anonymity. Human UI Live Nodes strip polls `GET /v1/mesh`. Not a Softwares product for anon-broadcast. Not legal advice.
+`/v1/mesh/*` PROXY to aziel-runtime suite mesh (`AZIEL_RUNTIME`). Default OFF. QNM-BUILD-1.0 live|locked|isolated. QNS-CD-1.0 photon QNS1 packet transfer is a hub cite / Worker mesh cross-map only (`qns_cd` on status / Live Nodes). Local `qnsd` is coded in [qnm-node](https://github.com/AzielEliab/qnm-node); runtime cites live in [aziel-runtime](https://github.com/AzielEliab/aziel-runtime). Not a Softwares-tab product. No public qnsd proxy. No Node Gate. No auto-heal. Not anonymity. Human UI Live Nodes strip polls `GET /v1/mesh`. Not a Softwares product for anon-broadcast. Not legal advice.
 
 See the product README section **Use with AI assistants**.
 OpenAPI: https://forgereceipts-download-tracker.vibelock.workers.dev/openapi.json

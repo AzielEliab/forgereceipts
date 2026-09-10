@@ -45,8 +45,10 @@ Python 3.10+. Core is stdlib. pytest is the dev extra. No network.
    counters inside this product.
 8. New behavior needs a test that fails without the change.
 9. **Suite mesh.** `/v1/mesh/*` PROXY to aziel-runtime via `AZIEL_RUNTIME`.
-   Default OFF. QNM rollup live|locked|isolated. No Node Gate. No
-   auto-heal. Not anonymity. Not a Softwares product for anon-broadcast.
+   Default OFF. QNM rollup live|locked|isolated. QNS-CD-1.0 photon QNS1
+   cross-map only (cite `qnm-node` + `aziel-runtime`; AZInterface pair
+   custody). No public qnsd proxy. No Node Gate. No auto-heal. Not
+   anonymity. Not a Softwares product for anon-broadcast or QNS-CD.
    Enabling requires a declared bearer. Identity: Aziel Eliab only.
 
 ## License of contributions

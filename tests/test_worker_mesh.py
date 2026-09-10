@@ -1,6 +1,7 @@
-"""Suite mesh Live Nodes + QNM-BUILD-1.0 contract.
+"""Suite mesh Live Nodes + QNM-BUILD-1.0 contract + QNS-CD-1.0 cross-map.
 
-Default OFF. live|locked|isolated. No Node Gate. No auto-heal. Not anonymity.
+Default OFF. live|locked|isolated. No Node Gate. No public qnsd proxy.
+No auto-heal. Not anonymity.
 """
 
 from __future__ import annotations
@@ -31,6 +32,30 @@ def test_mesh_contract_default_off_qnm_law() -> None:
     assert "anon_broadcast_publish_path: false" in MESH
     assert "Aziel Eliab" in MESH
     assert 'code: "MESH-OK"' in MESH
+    assert "/v1/qnsd" not in MESH
+
+
+def test_qns_cd_cross_map() -> None:
+    assert 'QNS_CD_SPEC = "QNS-CD-1.0"' in MESH
+    assert "export const QNS_CD" in MESH
+    assert "photon QNS1 packet transfer" in MESH
+    assert "https://github.com/AzielEliab/qnm-node" in MESH
+    assert "https://github.com/AzielEliab/aziel-runtime" in MESH
+    assert "https://github.com/AzielEliab/azinterface" in MESH
+    assert "qnsd" in MESH
+    assert "public_qnsd: false" in MESH
+    assert "public_proxy: false" in MESH
+    assert "softwares_tab: false" in MESH
+    assert 'catalog_field: "qns_cd"' in MESH
+    assert "export function attachQnsCd" in MESH
+    assert "qns_cd_spec: QNS_CD_SPEC" in MESH
+    assert "QNS-CD-1.0" in MESH  # MESH_NOTE
+    assert "No public qnsd proxy" in MESH
+    assert "QNS-CD-1.0" in README
+    assert "QNS-CD-1.0" in SKILL
+    assert "QNS-CD-1.0" in WORKER_README
+    assert "photon QNS1" in INDEX
+    assert "no public qnsd proxy" in INDEX
 
 
 def test_mesh_pointer_and_openapi_helpers() -> None:
