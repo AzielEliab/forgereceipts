@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import ast
+import subprocess
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -70,3 +71,12 @@ def test_embedded_skill_matches_skill_md() -> None:
     end = runtime.index(";", start)
     embedded = ast.literal_eval(runtime[start:end])
     assert embedded == skill
+    assert "; no public proxy)" not in runtime
+
+
+def test_worker_js_parses() -> None:
+    worker = ROOT / "workers" / "download-tracker" / "src"
+    for name in ("index.js", "runtime.js", "mesh.js"):
+        path = worker / name
+        proc = subprocess.run(["node", "--check", str(path)], capture_output=True, text=True)
+        assert proc.returncode == 0, f"{name}: {proc.stderr}"
