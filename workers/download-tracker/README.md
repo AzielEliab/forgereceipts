@@ -9,7 +9,8 @@ repository, other branches, and forks. Forks are identified by GitHub
 Worker name: `forgereceipts-download-tracker`
 Intended URL: `https://forgereceipts-download-tracker.vibelock.workers.dev/`
 
-The homepage is async `indexHtml` with a live count. GET `/` increments
+The homepage is async `indexHtml` with the rose-star brand mark (`/sigil.png`,
+empty alt, no words on the mark) top-left and a live count. GET `/` increments
 **page-views**. GET `/download` increments **downloads**. `GET /count`
 returns `{project, views, downloads, total}` (azhub convention: `total` = downloads).
 The download button shows `${n} counted`.
