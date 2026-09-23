@@ -32,7 +32,18 @@ Ops (do **not** increment downloads or views):
 | GET | `/v1/mesh/status` | PROXY alias of GET /v1/mesh. MESH-OK + enabled:false by default. |
 | GET | `/v1/mesh/nodes` | PROXY Live Nodes roster (5-minute presence). |
 | POST | `/v1/mesh/{enable,disable,join,heartbeat,leave,broadcast}` | PROXY. Bearer required to enable. No auto-heal. Anon-broadcast is not a publish path. |
-| POST | `/v1/receipt` | Preview a local receipt hash. Hosted never stores files. |
+| GET | `/v1/doctor` | Axes inside the receipt hash: request_id, attempt_n, parent_receipt_id, correlation_id. |
+| POST | `/v1/receipt` | Preview a local receipt hash. request_id, attempt_n, parent_receipt_id, correlation_id, and outcome are inside the hash. Hosted never stores files. |
+
+POST `/v1/receipt` puts these fields in the hashed canonical body. Changing any of them changes the receipt hash:
+
+- `request_id` — logical original request, same value across retries
+- `attempt_n` — 1-based integer
+- `parent_receipt_id` — prior attempt's receipt hash, null on the first attempt
+- `correlation_id` — optional, sealed as null when omitted
+- `outcome` — `retry`, `failed`, or `completed`
+
+GET `/v1/doctor` lists axes `request_id`, `attempt_n`, `parent_receipt_id`, and `correlation_id`. Receipts without integer `attempt_n` still verify under the older five-field hash. Not a forensic finding. A shared `request_id` is caller-supplied, or minted when omitted. This Worker does not guess that two calls were retries.
 
 Works with ChatGPT (GPT Actions / OpenAI), Grok (xAI), Venice, Claude (Anthropic), Cursor (MCP), Glama (MCP), Perplexity, Microsoft Copilot / Bing, Google Gemini / Vertex, Mistral, Meta AI, Apple Intelligence surfaces, Amazon Q tooling, DuckAssist, You.com, Cohere, and other MCP/OpenAPI-capable assistants. Import the OpenAPI spec, add HTTP tools, or connect via MCP. Public identity: Aziel Eliab only. This Worker `/v1/mesh/*` PROXY to aziel-runtime via AZIEL_RUNTIME. Catalog MCP `mesh_*` + FragGate `slug=mesh`. Suite mesh default OFF. QNM-BUILD-1.0 live|locked|isolated. QNS-CD-1.0 photon QNS1 packet transfer is a hub cite / Worker mesh cross-map only (local `qnsd` in [qnm-node](https://github.com/AzielEliab/qnm-node), runtime cites in [aziel-runtime](https://github.com/AzielEliab/aziel-runtime), pair custody [AZInterface](https://github.com/AzielEliab/azinterface)). Not a Softwares-tab product. No public qnsd proxy. No Node Gate. No auto-heal. Not anonymity. Not legal advice.
 

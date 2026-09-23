@@ -172,7 +172,7 @@ Live HTTPS runtime on the download-tracker Worker (does **not** increment the do
 - MCP catalog: https://aziel-runtime.vibelock.workers.dev/mcp
 - Suite mesh: https://forgereceipts-download-tracker.vibelock.workers.dev/v1/mesh (PROXY; default OFF)
 
-POST /v1/receipt {note, context?}. Local-style receipt JSON. Every response banners **Not legal advice. No court filing.** Child-best-interests motto. Does not call Odyssey or any court.
+POST /v1/receipt {note, context?, request_id?, attempt_n?, parent_receipt_id?, correlation_id?, outcome?}. Local-style receipt JSON. The hash covers `request_id`, `attempt_n`, `parent_receipt_id`, `correlation_id`, and `outcome` (`retry`, `failed`, or `completed`). GET `/v1/doctor` lists axes `request_id`, `attempt_n`, `parent_receipt_id`, and `correlation_id`. Receipts without integer `attempt_n` keep the older five-field hash. Not a forensic finding. Every response banners **Not legal advice. No court filing.** Child-best-interests motto. Does not call Odyssey or any court.
 
 **OpenAPI / GPT Actions / HTTP tools** (ChatGPT, Grok, Venice, Claude, Copilot, Gemini, Perplexity, Mistral, Meta AI, Amazon Q, DuckAssist, You.com, Cohere, and similar): import `https://forgereceipts-download-tracker.vibelock.workers.dev/openapi.json` (no auth). Or add an HTTP tool with method, URL, and JSON body from that spec. Start with GET `https://forgereceipts-download-tracker.vibelock.workers.dev/v1/health`.
 
