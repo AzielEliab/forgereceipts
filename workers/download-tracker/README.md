@@ -52,6 +52,8 @@ This Worker also hosts the product runtime API (CORS `*`). `/v1` routes do **not
 | Method | Path | Notes |
 |--------|------|-------|
 | GET | `/v1/health` | Liveness |
+| GET | `/v1/doctor` | Axes inside the receipt hash: request_id, attempt_n, parent_receipt_id, correlation_id |
+| POST | `/v1/receipt` | Hash covers request_id, attempt_n, parent_receipt_id, correlation_id, and outcome. Does not store files. |
 | GET | `/openapi.json` | OpenAPI 3.1 |
 | GET | `/ai` | How to wire any MCP/OpenAPI-capable assistant; MCP catalog |
 | GET | `/v1/mesh` | PROXY suite mesh status. Default OFF. Never enables. |

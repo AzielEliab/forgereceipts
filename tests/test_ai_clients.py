@@ -76,7 +76,7 @@ def test_embedded_skill_matches_skill_md() -> None:
 
 def test_worker_js_parses() -> None:
     worker = ROOT / "workers" / "download-tracker" / "src"
-    for name in ("index.js", "runtime.js", "mesh.js"):
+    for name in ("index.js", "runtime.js", "mesh.js", "receipt-attempt.js"):
         path = worker / name
         proc = subprocess.run(["node", "--check", str(path)], capture_output=True, text=True)
         assert proc.returncode == 0, f"{name}: {proc.stderr}"
