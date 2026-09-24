@@ -209,8 +209,7 @@ def run_doctor(data_dir: str | Path | None = None) -> dict[str, Any]:
 def format_doctor(report: dict[str, Any]) -> str:
     lines = [
         f"ForgeReceipts doctor {report.get('version')}",
-        str(report.get("disclaimer") or NOT_LEGAL_PROOF),
-        "No telemetry. Loopback only. Receipts are not legal proof.",
+        str(report.get("plain") or ""),
         "",
     ]
     for c in report.get("checks") or []:
@@ -224,5 +223,6 @@ def format_doctor(report: dict[str, Any]) -> str:
         lines.append("ALL CHECKS PASSED")
     else:
         lines.append("SOME CHECKS FAILED")
-    lines.append(str(report.get("plain") or ""))
+        lines.append("Read each FAIL line, then run: forgereceipts doctor")
+    lines.append(str(report.get("disclaimer") or NOT_LEGAL_PROOF))
     return "\n".join(lines).rstrip() + "\n"

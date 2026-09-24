@@ -1,0 +1,9 @@
+ForgeReceipts
+Author: Aziel Eliab
+
+1. python -m venv .venv && source .venv/bin/activate && pip install -e .
+2. forgereceipts ui
+3. Open http://127.0.0.1:8787 and choose Add file.
+
+Check this computer: forgereceipts doctor
+Check a saved receipt: forgereceipts verify-receipt receipt.json

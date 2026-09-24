@@ -27,6 +27,6 @@ python -m pip install -e .
 
 echo
 echo "Installed ForgeReceipts."
-echo "Run:  forgereceipts ui"
-echo "Then open http://127.0.0.1:8787  (loopback only)"
+echo "Next: forgereceipts ui"
+echo "Open http://127.0.0.1:8787/"
 echo "Author: Aziel Eliab."
