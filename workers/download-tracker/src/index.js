@@ -350,55 +350,172 @@ async function indexHtml(env) {
 </script>
 <!-- gitbaby-seo -->
 <style>
-  :root { color-scheme: dark; }
-  body { font: 16px/1.45 system-ui, sans-serif; max-width: 42rem; margin: 3rem auto; padding: 0 1.25rem 4rem; background: #0e1014; color: #e8eaef; }
-  .brandrow { display: flex; align-items: center; margin: 0 0 1rem; min-height: 48px; }
-  .brandmark { width: 40px; height: 40px; border-radius: 10px; object-fit: cover; flex: 0 0 40px; box-shadow: 0 0 0 1px #0003, 0 0 0 1px #c9a227; }
-  h1 { font-size: 1.75rem; margin: 0 0 .35rem; }
-  .motto { color: #9aa3b2; margin: 0 0 1.5rem; }
-  .card { border: 1px solid #2a3140; border-radius: 12px; padding: 1.25rem 1.35rem; background: #151922; }
+  :root {
+    color-scheme: dark;
+    --bg: #101114;
+    --text: #f3f4f6;
+    --muted: #c5ccd6;
+    --panel: #181b22;
+    --line: #3c4454;
+    --fill: #f4f5f7;
+    --ink: #12141a;
+    --focus: #ffffff;
+    --banner-bg: #2c2618;
+    --banner-text: #f6e7b8;
+    --link: #d7e0fb;
+    --accent: #f0d48a;
+    --code-bg: #0d0f13;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root { color-scheme: dark; }
+  }
+  @media (prefers-color-scheme: light) {
+    :root {
+      color-scheme: light;
+      --bg: #f7f6f3;
+      --text: #161616;
+      --muted: #3e4450;
+      --panel: #ffffff;
+      --line: #c8c4ba;
+      --fill: #161616;
+      --ink: #ffffff;
+      --focus: #0b3a82;
+      --banner-bg: #f4ead0;
+      --banner-text: #3a2e10;
+      --link: #1a3f8a;
+      --accent: #5c4308;
+      --code-bg: #efeee9;
+    }
+  }
+  * { box-sizing: border-box; }
+  html { background: var(--bg); }
+  body {
+    font: 16px/1.5 system-ui, "Segoe UI", sans-serif;
+    max-width: 40rem;
+    margin: 0 auto;
+    padding: 1.15rem 1rem 2.75rem;
+    background: var(--bg);
+    color: var(--text);
+    overflow-wrap: anywhere;
+  }
+  a.skip { position: absolute; left: -999px; top: 0; }
+  a.skip:focus {
+    left: 1rem; top: 1rem; z-index: 5;
+    background: var(--fill); color: var(--ink);
+    padding: .45rem .75rem; text-decoration: none;
+    outline: 2px solid var(--focus); outline-offset: 2px;
+  }
+  a:focus-visible, button:focus-visible, input:focus-visible {
+    outline: 2px solid var(--focus);
+    outline-offset: 2px;
+  }
+  .hero { margin: 0 0 1.25rem; }
+  .brandrow { display: flex; align-items: center; margin: 0 0 .85rem; min-height: 48px; }
+  .brandmark { width: 40px; height: 40px; border-radius: 10px; object-fit: cover; flex: 0 0 40px; box-shadow: 0 0 0 1px var(--line); }
+  h1 { font-size: 2rem; font-weight: 700; letter-spacing: .01em; line-height: 1.15; margin: 0 0 .35rem; }
+  .motto { color: var(--muted); margin: 0 0 .7rem; font-size: 1.05rem; }
+  .lede { margin: 0 0 .9rem; max-width: 38rem; }
+  a.btn.block.primary {
+    display: block; width: 100%; margin: 0 0 .7rem; padding: 1.05rem 1.2rem;
+    border: 1px solid transparent; border-radius: 10px;
+    background: var(--fill); color: var(--ink);
+    text-align: center; text-decoration: none;
+    font: 700 1.25rem/1.15 ui-monospace, Menlo, Consolas, monospace;
+    letter-spacing: .03em; cursor: pointer;
+  }
+  a.btn.block.primary:hover { filter: brightness(1.06); }
+  .asset-note { color: var(--muted); font-size: .92rem; margin: 0 0 1rem; }
+  .features { display: grid; grid-template-columns: 1fr; gap: .7rem 1.1rem; margin: 0; padding: 0; list-style: none; }
+  .features li { margin: 0; }
+  @media (min-width: 640px) {
+    .features { grid-template-columns: 1fr 1fr 1fr; }
+  }
+  .banner { border: 1px solid var(--line); background: var(--banner-bg); color: var(--banner-text); padding: .85rem 1rem; border-radius: 8px; margin: 0 0 1rem; font-size: .95rem; }
+  .card { border: 1px solid var(--line); border-radius: 12px; padding: 1.1rem 1.15rem; background: var(--panel); margin: 0 0 1rem; }
   .nums { display: grid; grid-template-columns: 1fr 1fr; gap: .8rem; margin: 0 0 1rem; }
   .count { font-size: 2.2rem; font-variant-numeric: tabular-nums; font-weight: 700; margin: 0; }
-  .count span { display: block; font-size: .95rem; font-weight: 500; color: #9aa3b2; }
-  .kid { font-size: 1.05rem; margin: 0 0 1rem; }
-  .btns { display: grid; grid-template-columns: 1fr 1fr; gap: .75rem; margin: 0 0 .85rem; }
-  @media (max-width: 520px) { .btns { grid-template-columns: 1fr; } }
-  a.btn, button.btn { display: block; width: 100%; box-sizing: border-box; text-align: center; font: inherit; font-size: 1.2rem; font-weight: 750; padding: 1rem 1.1rem; border-radius: 10px; border: 0; cursor: pointer; text-decoration: none; }
-  a.btn.primary { background: #e8eaef; color: #0e1014; }
-  button.btn.install { background: #c9a227; color: #14110a; }
-  button.btn.install.copied { background: #7dcf9a; color: #0e1014; }
-  .meta { margin-top: 1.1rem; color: #9aa3b2; font-size: .92rem; }
-  .meta a { color: #c9d4ff; }
-  .iso { margin-top: .85rem; font-size: .85rem; color: #7d8696; }
-  .banner { border: 1px solid #5c4a1a; background: #241c0d; color: #f0d78c; padding: .85rem 1rem; border-radius: 8px; margin: 0 0 1.2rem; font-size: .92rem; }
-  pre { background: #0e1014; padding: .75rem .9rem; overflow: auto; border-radius: 8px; font-size: .82rem; }
-  code { font-size: .88rem; }
-
-  .cite { margin-top: 1.4rem; padding-top: 1rem; border-top: 1px solid #2a3140; }
-  .cite h2 { font-size: 1.05rem; margin: 0 0 .4rem; }
-  .cite p { color: #c5ccd8; font-size: .95rem; }
-  .cite a { color: #c9d4ff; }
-
-  #meshStrip { border: 1px solid #c9a227; border-radius: 14px; padding: .85rem 1rem; background: #151922; margin: 0 0 1.1rem; display: flex; flex-wrap: wrap; align-items: center; gap: .7rem 1rem; font-size: .88rem; color: #9aa3b2; }
-  #meshStrip .live { color: #e8eaef; }
-  #meshStrip .live b { color: #c9a227; font-size: 1.35rem; margin-right: .35rem; }
-  #meshStrip .rollup b { color: #c9a227; }
-  #meshStrip button { font: 700 .78rem/1 ui-monospace, Menlo, Consolas, monospace; height: 2rem; padding: 0 .75rem; border-radius: 8px; background: #101010; color: #e8eaef; border: 1px solid #c9a227; cursor: pointer; }
-  #meshStrip button:hover { background: #241c0d; color: #c9a227; }
-  #meshStrip input { width: 10rem; padding: .4rem .55rem; border: 1px solid #c9a227; border-radius: 8px; background: #0e0e0e; color: #e8eaef; font: inherit; }
-  #meshProducts { flex-basis: 100%; margin: 0; }
+  .count span { display: block; font-size: .95rem; font-weight: 600; color: var(--muted); }
+  .kid { font-size: 1.02rem; margin: 0 0 .85rem; }
+  button.btn.install {
+    display: block; width: 100%; text-align: center;
+    font: 600 1rem/1.2 system-ui, sans-serif;
+    padding: .8rem 1rem; border-radius: 10px;
+    border: 1px solid var(--line); background: transparent; color: var(--text);
+    cursor: pointer;
+  }
+  button.btn.install.copied { background: var(--fill); color: var(--ink); border-color: transparent; }
+  .meta, .iso { margin: .85rem 0 0; color: var(--muted); font-size: .92rem; }
+  a { color: var(--link); }
+  .meta a, .cite a, footer a { text-decoration-thickness: 1px; text-underline-offset: .15em; }
+  pre {
+    background: var(--code-bg); color: var(--text);
+    padding: .75rem .9rem; border-radius: 8px; font-size: .82rem;
+    max-width: 100%; overflow-x: auto; white-space: pre-wrap; overflow-wrap: anywhere;
+  }
+  code { font-size: .92em; font-family: ui-monospace, Menlo, Consolas, monospace; }
+  .cite { margin: 0 0 1rem; padding-top: .25rem; }
+  .cite h2, .card h2 { font-size: 1.05rem; font-weight: 700; margin: 0 0 .4rem; letter-spacing: 0; text-transform: none; color: var(--text); }
+  .cite p { color: var(--muted); font-size: .95rem; }
+  #meshStrip {
+    border: 1px solid var(--line); border-radius: 12px; padding: .85rem 1rem;
+    background: var(--panel); margin: 0 0 1rem;
+    display: flex; flex-wrap: wrap; align-items: center; gap: .65rem .9rem;
+    font-size: .88rem; color: var(--muted);
+  }
+  #meshStrip .live { color: var(--text); }
+  #meshStrip .live b { color: var(--accent); font-size: 1.35rem; margin-right: .35rem; }
+  #meshStrip .rollup b { color: var(--accent); }
+  #meshStrip .controls { display: flex; flex-wrap: wrap; gap: .5rem; flex-basis: 100%; }
+  #meshStrip button {
+    font: 600 .82rem/1 system-ui, sans-serif; min-height: 2rem; padding: 0 .75rem;
+    border-radius: 8px; background: transparent; color: var(--text);
+    border: 1px solid var(--line); cursor: pointer;
+  }
+  #meshStrip button:hover { background: var(--bg); }
+  #meshStrip input {
+    flex: 1 1 10rem; min-width: 0; width: auto; max-width: 100%;
+    padding: .45rem .6rem; border: 1px solid var(--line); border-radius: 8px;
+    background: var(--bg); color: var(--text); font: inherit;
+  }
+  #meshProducts { flex-basis: 100%; margin: 0; overflow-wrap: anywhere; }
+  footer.quiet { color: var(--muted); font-size: .9rem; padding: .35rem 0 0; }
+  footer.quiet p { margin: .35rem 0; }
+  footer.quiet a { color: var(--text); }
 </style>
 <body>
-  <div class="brandrow"><img class="brandmark" src="/sigil.png" width="40" height="40" alt="" decoding="async"></div>
-  <h1>ForgeReceipts</h1>
-  <p class="motto">Child's Best Interests First. Integrity Over Narrative. Local Control. Always. Author Aziel Eliab.</p>
-  <p class="banner">Local-first evidence integrity packaging. Not legal advice. Does not contact courts, Odyssey, email, or any cloud service. No telemetry. Author: Aziel Eliab.</p>
+  <a class="skip" href="#downloadBtn">Skip to download</a>
+  <header class="hero">
+    <div class="brandrow"><img class="brandmark" src="/sigil.png" width="40" height="40" alt="" decoding="async"></div>
+    <h1>ForgeReceipts</h1>
+    <p class="motto">Child's Best Interests First. Integrity Over Narrative. Local Control. Always. Author Aziel Eliab.</p>
+    <p class="lede">Local-first evidence integrity for pro se fathers in family court.</p>
+    <a id="downloadBtn" class="btn block primary dl" href="/download?asset=${DEFAULT_ASSET}">Download</a>
+    <p class="asset-note">${DEFAULT_ASSET} — ${n} counted. The Worker serves the gzip (HTTP 200) for every branch and fork.</p>
+    <p class="banner">Local-first evidence integrity packaging. Not legal advice. Does not contact courts, Odyssey, email, or any cloud service. No telemetry. Author: Aziel Eliab.</p>
+    <ul class="features">
+      <li>Log, journal, and SHA-256 forensics on this computer.</li>
+      <li>Verify, then import or export the receipt you hold.</li>
+      <li>File templates, a guide, and the state you pick.</li>
+    </ul>
+  </header>
+  <div class="card">
+    <div class="nums">
+      <p class="count">${v}<span>Views</span></p>
+      <p class="count">${n}<span>Downloads</span></p>
+    </div>
+    <p class="kid">One-click install copies a Terminal command. After it finishes, run <code>forgereceipts ui</code>.</p>
+    <button type="button" class="btn install" id="install-btn">One-click install</button>
+    <pre id="install-cmd">curl -fsSL https://forgereceipts-download-tracker.vibelock.workers.dev/install.sh | bash</pre>
+    <p class="kid">Then run: <code>forgereceipts ui</code> and open http://127.0.0.1:8787 (this computer only).</p>
+    <p class="meta">The download count ticks on the Download click. No 302 to GitHub. Forks using this same link are counted automatically.</p>
+    <p class="iso">Isolated counter: Worker <code>forgereceipts-download-tracker</code>, project <code>forgereceipts</code>, KV <code>FORGERECEIPTS_DOWNLOADS</code>. Not mixed with any other product. /v1 does not increment downloads.</p>
+  </div>
   <div id="meshStrip" aria-label="Suite Live Nodes">
     <div class="live"><b id="meshLiveCount">0</b> Live Nodes</div>
     <div id="meshLine">Suite mesh: off (default). QNM-BUILD-1.0. QNS-CD-1.0. Not an anonymity network.</div>
     <div class="rollup">live <b id="qnmLive">0</b> · locked <b id="qnmLocked">0</b> · isolated <b id="qnmIsolated">0</b></div>
     <div>No Node Gate · No auto-heal · Aziel Eliab only</div>
-    <div>
+    <div class="controls">
       <input id="meshBearer" type="text" maxlength="80" placeholder="bearer (required to enable)" aria-label="mesh bearer">
       <button id="meshEnable" type="button" title="Enable suite mesh. Declared bearer required. Default off.">Enable</button>
       <button id="meshDisable" type="button" title="Disable suite mesh (always allowed)">Disable</button>
@@ -407,22 +524,6 @@ async function indexHtml(env) {
     </div>
     <div id="meshProducts">Catalog MCP mesh_* · FragGate slug=mesh · /v1/mesh/* PROXY · QNS-CD-1.0 photon QNS1 · not AnonBroadcast · not AZMail ring · not a Node Gate · no public qnsd proxy</div>
   </div>
-  <div class="card">
-    <div class="nums">
-      <p class="count">${v}<span>Views</span></p>
-      <p class="count">${n}<span>Downloads</span></p>
-    </div>
-    <p class="kid"><strong>Two big buttons.</strong> Download saves the gzip (the Downloads number goes up). One-click install copies a Terminal command. After it finishes, type <code>forgereceipts ui</code>.</p>
-    <div class="btns">
-      <a class="btn primary dl" href="/download?asset=${DEFAULT_ASSET}">Download</a>
-      <button type="button" class="btn install" id="install-btn">One-click install</button>
-    </div>
-    <pre id="install-cmd">curl -fsSL https://forgereceipts-download-tracker.vibelock.workers.dev/install.sh | bash</pre>
-    <p class="kid">Then run: <code>forgereceipts ui</code> and open http://127.0.0.1:8787 (this computer only).</p>
-    <p class="meta">The download count ticks on the Download click. The Worker serves the gzip (HTTP 200). No 302 to GitHub. Forks using this same link are counted automatically. ${DEFAULT_ASSET} — ${n} counted.</p>
-    <p class="iso">Isolated counter: Worker <code>forgereceipts-download-tracker</code>, project <code>forgereceipts</code>, KV <code>FORGERECEIPTS_DOWNLOADS</code>. Not mixed with any other product. /v1 does not increment downloads.</p>
-    <p class="meta">Paper: <a href="https://doi.org/10.5281/zenodo.21436074">doi:10.5281/zenodo.21436074</a> · <a href="https://zenodo.org/records/21436074">Zenodo</a> · Apache-2.0 · Eliab, Aziel</p>
-    <p class="meta"><a href="/stats">JSON stats</a> · <a href="/openapi.json">OpenAPI</a> · <a href="/v1/skill">Skill</a> · <a href="/v1/mesh">/v1/mesh</a> · <a href="/ai">AI runtime</a> · <a href="${GITHUB_REPO}">GitHub</a> · <a href="${GITHUB_LATEST}">releases</a></p>
     <script>
       (function () {
         var cmd = "curl -fsSL https://forgereceipts-download-tracker.vibelock.workers.dev/install.sh | bash";
@@ -550,15 +651,21 @@ async function indexHtml(env) {
         document.addEventListener("visibilitychange", function () { if (!document.hidden) refreshMesh(); });
       })();
     </script>
+  <section class="card" aria-label="Per repo, branch, and fork">
     <h2>Per repo / branch / fork</h2>
     <ul>${breakdown}</ul>
-  </div>
+  </section>
 
 <section class="cite" id="cite">
   <h2>How to cite</h2>
   <p>Aziel Eliab. ForgeReceipts. https://github.com/AzielEliab/forgereceipts. https://forgereceipts-download-tracker.vibelock.workers.dev. https://doi.org/10.5281/zenodo.21436074.</p>
   <p><a href="https://aziel-runtime.vibelock.workers.dev/">Catalog</a> · <a href="https://github.com/AzielEliab/forgereceipts">GitHub</a> · <a href="https://forgereceipts-download-tracker.vibelock.workers.dev/download">Download</a> · <a href="https://forgereceipts-download-tracker.vibelock.workers.dev/cite.json">cite.json</a></p>
 </section>
+<footer class="quiet">
+  <p>Apache-2.0 · Aziel Eliab · ForgeReceipts</p>
+  <p><a href="${GITHUB_REPO}">GitHub</a> · <a href="${GITHUB_LATEST}">releases</a> · <a href="/openapi.json">OpenAPI</a> · <a href="/v1/skill">Skill</a> · <a href="/ai">AI runtime</a> · <a href="/stats">Stats</a> · <a href="/v1/mesh">Mesh</a> · <a href="https://doi.org/10.5281/zenodo.21436074">DOI</a></p>
+  <p>Receipts stay on this computer. Forks are welcome and always allowed.</p>
+</footer>
 <!-- /gitbaby-seo -->
 </body>
 </html>`;

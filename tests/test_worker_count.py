@@ -22,6 +22,6 @@ def test_count_returns_views_downloads_and_total() -> None:
 
 def test_views_increment_on_home_downloads_on_download() -> None:
     assert "url.pathname === \"/\" && request.method === \"GET\"" in INDEX
-    assert "await incrementViews(env)" in INDEX
+    assert "await incrementViews(env, request)" in INDEX
     assert 'url.pathname === "/download"' in INDEX
-    assert "await increment(env, dims)" in INDEX
+    assert "await increment(env, dims, request)" in INDEX
