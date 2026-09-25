@@ -1,20 +1,36 @@
 # ForgeReceipts
 
-Local-first evidence integrity platform for pro se fathers in family court.
+Save a receipt for a file or a note on this computer, then check it later.
 
-**Author:** Aziel Eliab
-**Date:** July 2026
+**Author:** Aziel Eliab  
 **License:** [Apache-2.0](LICENSE)
 
-> Child's Best Interests First. Integrity Over Narrative. Local Control. Always.
+## Start
 
-**This software is not legal advice.** It does not guarantee any court outcome. It does not contact courts, Odyssey, email, or any cloud service. No telemetry. No accounts.
+1. Install
 
-See the spec: [docs/whitepaper.md](docs/whitepaper.md).
-Engine map: [docs/engines.md](docs/engines.md).
-How to contribute: [CONTRIBUTING.md](CONTRIBUTING.md).
+   ```bash
+   python -m venv .venv && source .venv/bin/activate && pip install -e .
+   ```
 
-**Forks are welcome and always allowed.**
+2. Open the app
+
+   ```bash
+   forgereceipts ui
+   ```
+
+3. Open http://127.0.0.1:8787 and choose **Add file**.
+
+Check this computer: `forgereceipts doctor`  
+Check a saved receipt: `forgereceipts verify-receipt path/to/receipt.json`
+
+## Notes
+
+Child's Best Interests First. Integrity Over Narrative. Local Control. Always.
+
+Not legal advice. A receipt is not legal proof. ForgeReceipts does not contact courts, Odyssey, email, or any cloud service. No telemetry. No accounts. Forks are welcome.
+
+See [docs/whitepaper.md](docs/whitepaper.md), [docs/engines.md](docs/engines.md), and [CONTRIBUTING.md](CONTRIBUTING.md).
 
 
 ## One-click install
@@ -57,26 +73,9 @@ Isolated counter: Worker `forgereceipts-download-tracker`, KV `FORGERECEIPTS_DOW
 
 ## Quick start
 
-**This software is not legal advice. A receipt is not legal proof.**
+Follow the three steps under **Start**. After `forgereceipts ui`, open http://127.0.0.1:8787 and choose **Add file**. You should see **Saved a receipt for this file** and a hash. Log, Journal, Verify, and Advanced (Forensics, File, Guide, Import/Export) stay in the app.
 
-1. Install
-
-   ```bash
-   python -m venv .venv && source .venv/bin/activate && pip install -e ".[dev]"
-   ```
-
-2. Run
-
-   ```bash
-   forgereceipts ui
-   ```
-
-3. Open http://127.0.0.1:8787. Pick **your state** at the top. Use **Log · Journal · Forensics · File · Guide · Verify · Import/Export**. Tap **Add file** or **Try a sample** on Import/Export. You should see **Saved a receipt for this file** and a hash.
-
-Loopback only (127.0.0.1). No CDN, no telemetry, no accounts. Receipts stay on this computer.
-
-Check the install: `forgereceipts doctor`  
-Check a saved receipt file: `forgereceipts verify-receipt path/to/receipt.json`
+Receipts stay on this computer. Loopback only (127.0.0.1).
 
 Counted download: [https://forgereceipts-download-tracker.vibelock.workers.dev/](https://forgereceipts-download-tracker.vibelock.workers.dev/)
 

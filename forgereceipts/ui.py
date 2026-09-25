@@ -115,7 +115,33 @@ class ForgeHandler(BaseHTTPRequestHandler):
         raw = self.rfile.read(length) if length else b"{}"
         return parse_json_bytes(raw)
 
+    def _wants_json(self) -> bool:
+        """Machine clients that ask for JSON. Browsers ask for HTML first."""
+        accept = (self.headers.get("Accept") or "").lower()
+        if not accept or accept.strip() == "*/*":
+            return False
+        for part in accept.split(","):
+            media = part.split(";", 1)[0].strip()
+            if media in {"text/html", "application/xhtml+xml"}:
+                return False
+            if media == "application/json":
+                return True
+        return False
+
     def _spa(self) -> None:
+        if self._wants_json():
+            _host, port = self.server.server_address[:2]
+            self._json(
+                {
+                    "name": "ForgeReceipts",
+                    "version": __version__,
+                    "author": "Aziel Eliab",
+                    "open": f"http://127.0.0.1:{port}/",
+                    "hint": "forgereceipts ui",
+                    "disclaimer": NOT_LEGAL_PROOF,
+                }
+            )
+            return
         index = STATIC_DIR / "index.html"
         body = index.read_bytes()
         self._send(200, body, "text/html; charset=utf-8")
@@ -594,10 +620,7 @@ def serve(
 ) -> None:
     httpd = make_server(host, port, data_dir)
     bound_host, bound_port = httpd.server_address[:2]
-    print(
-        f"ForgeReceipts {__version__}  http://{bound_host}:{bound_port}/  "
-        "(local only, not legal advice)"
-    )
+    print(f"Open http://{bound_host}:{bound_port}/", flush=True)
     try:
         httpd.serve_forever()
     except KeyboardInterrupt:

@@ -45,6 +45,31 @@ def test_verify_receipt_fail_tamper(tmp_path: Path, capsys) -> None:
     assert "FAIL" in out
 
 
+def test_verify_receipt_json(tmp_path: Path, capsys) -> None:
+    import json
+
+    row = _row(tmp_path)
+    path = tmp_path / "receipt.json"
+    path.write_text(dump_receipt(row), encoding="utf-8")
+    assert main(["verify-receipt", "--json", str(path)]) == 0
+    data = json.loads(capsys.readouterr().out)
+    assert data["ok"] is True
+    assert data["verdict"] == "PASS"
+    assert data["hash"] == row["hash"]
+
+
+def test_verify_receipt_missing_path(capsys) -> None:
+    import pytest
+
+    with pytest.raises(SystemExit) as ei:
+        main(["verify-receipt"])
+    assert ei.value.code == 2
+    err = capsys.readouterr().err
+    assert "receipt file is required" in err
+    assert "forgereceipts verify-receipt" in err
+    assert "Traceback" not in err
+
+
 def test_verify_receipt_bad_json(tmp_path: Path, capsys) -> None:
     path = tmp_path / "nope.json"
     path.write_text("this is not json {{", encoding="utf-8")

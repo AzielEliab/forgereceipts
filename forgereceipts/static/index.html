@@ -3,61 +3,94 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<meta name="theme-color" content="#c4a35a">
-<title>ForgeReceipts — local notes, not legal advice</title>
+<meta name="color-scheme" content="light dark">
+<meta name="theme-color" content="#f7f4ee" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#12110e" media="(prefers-color-scheme: dark)">
+<title>ForgeReceipts</title>
 <link rel="manifest" href="/manifest.webmanifest">
 <link rel="stylesheet" href="/static/style.css">
 </head>
 <body>
-<div class="disclaimer-banner">Not Legal Advice — a receipt is not legal proof — does not contact courts, Odyssey, or the cloud</div>
-
-<header class="app">
+<header class="top">
   <div class="brand">
+    <p class="eyebrow">On this computer</p>
     <h1>ForgeReceipts</h1>
-    <p class="motto">Child's Best Interests First. Integrity Over Narrative. Local Control. Always.</p>
   </div>
-  <span class="local-pill">On this computer only · no accounts</span>
+  <p class="byline">Aziel Eliab</p>
 </header>
 
+<nav class="nav" id="nav" aria-label="Sections">
+  <button type="button" data-mode="home" class="active">Home</button>
+  <button type="button" data-mode="log">Log</button>
+  <button type="button" data-mode="journal">Journal</button>
+  <button type="button" data-mode="verify">Verify</button>
+  <details class="nav-more" id="nav-more">
+    <summary>Advanced</summary>
+    <div class="nav-more-panel">
+      <button type="button" data-mode="forensics">Forensics</button>
+      <button type="button" data-mode="file">File</button>
+      <button type="button" data-mode="guide">Guide</button>
+      <button type="button" data-mode="io">Import/Export</button>
+      <button type="button" data-mode="doctor">Check this computer</button>
+    </div>
+  </details>
+</nav>
+
 <section class="state-bar" id="state-bar">
-  <label for="state-filter">Your state</label>
+  <label for="state-select">Your state</label>
   <input id="state-filter" type="search" placeholder="Type to find your state" autocomplete="off" aria-label="Find your state">
   <select id="state-select" aria-label="Your state" autocomplete="off">
     <option value="IN">Indiana</option>
   </select>
   <p class="state-now">Showing guidance for <strong id="state-name">Indiana</strong>.</p>
-  <p class="federal-chip">Federal baseline is always on (Troxel, Stanley, evidence/civil rules, UCCJEA). That is national — not your state's law.</p>
 </section>
 
-<nav class="modes" id="nav">
-  <button type="button" data-mode="log" class="active">Log</button>
-  <button type="button" data-mode="journal">Journal</button>
-  <button type="button" data-mode="forensics">Forensics</button>
-  <button type="button" data-mode="file">File</button>
-  <button type="button" data-mode="guide">Guide</button>
-  <button type="button" data-mode="verify">Verify</button>
-  <button type="button" data-mode="io">Import/Export</button>
-</nav>
-
 <main id="app">
-  <section class="card" data-panel="log">
-    <h2>Log</h2>
-    <p class="help">Write what happened. You cannot edit later. A fix is a new note. Say how this matters to the child.</p>
-    <div class="giant-grid one">
-      <button class="giant" id="log-save" type="button">Save this note</button>
+  <section class="card" data-panel="home">
+    <h2>Save a receipt</h2>
+    <p class="help">Keep a fingerprint of a file on this computer, so you can check later that the file is unchanged.</p>
+    <button class="primary" id="btn-add-file" type="button">Add file</button>
+    <input id="add-file-input" class="hidden" type="file">
+    <input id="import-file-input" class="hidden" type="file" accept=".json,.jsonl,application/json,text/plain">
+    <div id="saved-box" class="saved-banner hidden" role="status">
+      <p class="saved-title">Saved a receipt for this file</p>
+      <p class="hash" id="saved-hash"></p>
+      <p class="muted" id="saved-note"></p>
     </div>
+    <p class="error" id="home-err" role="alert"></p>
+    <h3>Receipts on this computer</h3>
+    <p class="muted" id="home-empty">No receipts yet. Add a file to save the first one.</p>
+    <div id="home-list"></div>
+    <div id="home-detail" class="detail hidden"></div>
+    <details class="advanced" id="home-advanced">
+      <summary>Advanced</summary>
+      <div class="row">
+        <button class="ghost" id="btn-import" type="button">Import receipt</button>
+        <button class="ghost" id="btn-export" type="button">Export receipt</button>
+        <button class="ghost" id="btn-demo" type="button">Try a sample</button>
+      </div>
+    </details>
+  </section>
+
+  <section class="card hidden" data-panel="log">
+    <h2>Log</h2>
+    <p class="help">Write what happened. A saved note stays as it was. A fix is a new note.</p>
     <label for="inc-summary">What happened</label>
     <input id="inc-summary" placeholder="Short title">
     <label for="inc-evidence">What you saw or have</label>
-    <textarea id="inc-evidence" placeholder="Facts only. Not a speech."></textarea>
-    <label for="inc-impact">How this matters to the child (required)</label>
-    <textarea id="inc-impact" placeholder="Child's best interests — in your own words"></textarea>
-    <p class="muted" id="log-tags-label">Suggested tags for this state (tap to add)</p>
+    <textarea id="inc-evidence" placeholder="Facts only."></textarea>
+    <label for="inc-impact">How this matters to the child</label>
+    <textarea id="inc-impact" placeholder="In your own words"></textarea>
+    <p class="muted" id="log-tags-label">Suggested tags for this state</p>
     <div id="log-tags" class="tag-row"></div>
-    <label class="more-label" for="inc-conf">How sure are you (0 to 1)</label>
-    <input id="inc-conf" type="number" min="0" max="1" step="0.05" value="1">
-    <p class="error" id="inc-err"></p>
-    <div class="score-row" id="log-score"></div>
+    <details class="advanced">
+      <summary>Advanced</summary>
+      <label class="more-label" for="inc-conf">How sure are you (0 to 1)</label>
+      <input id="inc-conf" type="number" min="0" max="1" step="0.05" value="1">
+      <div class="score-row" id="log-score"></div>
+    </details>
+    <p class="error" id="inc-err" role="alert"></p>
+    <button class="primary" id="log-save" type="button">Save this note</button>
     <h3>Saved notes</h3>
     <div id="inc-list"></div>
     <div id="inc-detail" class="detail hidden"></div>
@@ -65,45 +98,49 @@
 
   <section class="card hidden" data-panel="journal">
     <h2>Journal</h2>
-    <p class="help">Time with your child. Photos and receipts stay on this computer. A private note is not part of the hash.</p>
-    <div class="giant-grid one">
-      <button class="giant" id="j-save" type="button">Save time with child</button>
-    </div>
+    <p class="help">Time with your child. Photos and receipts stay on this computer.</p>
     <label for="j-summary">What you did</label>
     <input id="j-summary" placeholder="Afternoon at the park">
     <label for="j-evidence">What happened</label>
     <textarea id="j-evidence"></textarea>
-    <label for="j-impact">How this served the child (required)</label>
+    <label for="j-impact">How this served the child</label>
     <textarea id="j-impact" placeholder="In your own words"></textarea>
-    <label for="j-file">Optional photo or receipt</label>
-    <input id="j-file" type="file">
-    <input id="j-hash" class="hidden" placeholder="hash">
-    <label for="j-private">Private note (not hashed)</label>
-    <textarea id="j-private"></textarea>
-    <p class="error" id="j-err"></p>
+    <details class="advanced">
+      <summary>Advanced</summary>
+      <label for="j-file">Optional photo or receipt</label>
+      <input id="j-file" type="file">
+      <input id="j-hash" class="hidden" placeholder="hash">
+      <label for="j-private">Private note (not part of the fingerprint)</label>
+      <textarea id="j-private"></textarea>
+    </details>
+    <p class="error" id="j-err" role="alert"></p>
+    <button class="primary" id="j-save" type="button">Save time with child</button>
     <div id="j-list"></div>
   </section>
 
   <section class="card hidden" data-panel="forensics">
     <h2>Forensics</h2>
-    <p class="help">Make a fingerprint (SHA-256) of a file on this computer. Later you can check the file is the same bytes. Files never leave this machine.</p>
-    <div class="giant-grid two">
-      <button class="giant" id="for-pick" type="button">Hash a file</button>
-      <button class="giant ghost-giant" id="for-reverify" type="button">Check a file</button>
-    </div>
+    <p class="help">Make a fingerprint of a file on this computer. The file stays here.</p>
+    <button class="primary" id="for-pick" type="button">Hash a file</button>
     <input id="for-file" class="hidden" type="file">
-    <label for="for-path">Or a path on this computer</label>
-    <input id="for-path" placeholder="/home/you/exhibit.pdf">
-    <label for="for-name">File name</label>
-    <input id="for-name" placeholder="exhibit.pdf">
-    <label for="for-expected">Saved fingerprint (to check later)</label>
-    <input id="for-expected" placeholder="64 letters and numbers">
     <pre class="out" id="for-out"></pre>
+    <details class="advanced">
+      <summary>Advanced</summary>
+      <label for="for-path">Or a path on this computer</label>
+      <input id="for-path" placeholder="/home/you/exhibit.pdf">
+      <label for="for-name">File name</label>
+      <input id="for-name" placeholder="exhibit.pdf">
+      <label for="for-expected">Saved fingerprint (to check later)</label>
+      <input id="for-expected" placeholder="64 letters and numbers">
+      <div class="row">
+        <button class="ghost" id="for-reverify" type="button">Check a file</button>
+      </div>
+    </details>
   </section>
 
   <section class="card hidden" data-panel="file">
     <h2>File</h2>
-    <p class="help">Local templates only. This app does not talk to Odyssey or any court. You print or save a file yourself.</p>
+    <p class="help">A local template you can print or save. You send it yourself.</p>
     <p class="state-hint" id="file-efile"></p>
     <label for="f-state">State on the caption</label>
     <input id="f-state" value="Indiana">
@@ -119,26 +156,29 @@
     <select id="f-role"><option>Petitioner</option><option>Respondent</option></select>
     <label for="f-title">Title</label>
     <input id="f-title" value="MOTION">
-    <label for="f-body">Body (your words)</label>
-    <textarea id="f-body">[Write in your own words. Not legal advice.]</textarea>
-    <label for="f-ex">How many exhibits</label>
-    <input id="f-ex" type="number" min="0" value="3">
-    <label for="f-party">Exhibit labels</label>
-    <select id="f-party">
-      <option value="petitioner">Petitioner's Exhibit 1, 2, 3…</option>
-      <option value="respondent">Respondent's Exhibit A, B, C…</option>
-    </select>
-    <div class="giant-grid two">
-      <button class="giant" id="f-txt" type="button">Save as text</button>
-      <button class="giant ghost-giant" id="f-html" type="button">Save as page</button>
-    </div>
+    <label for="f-body">Body</label>
+    <textarea id="f-body">[Write in your own words.]</textarea>
+    <button class="primary" id="f-txt" type="button">Save as text</button>
     <div id="f-check"></div>
     <pre class="out" id="f-out"></pre>
+    <details class="advanced">
+      <summary>Advanced</summary>
+      <label for="f-ex">How many exhibits</label>
+      <input id="f-ex" type="number" min="0" value="3">
+      <label for="f-party">Exhibit labels</label>
+      <select id="f-party">
+        <option value="petitioner">Petitioner's Exhibit 1, 2, 3…</option>
+        <option value="respondent">Respondent's Exhibit A, B, C…</option>
+      </select>
+      <div class="row">
+        <button class="ghost" id="f-html" type="button">Save as page</button>
+      </div>
+    </details>
   </section>
 
   <section class="card hidden" data-panel="guide">
     <h2>Guide</h2>
-    <p class="help">Plain-English steps. Not legal advice. Federal names stay visible next to your state.</p>
+    <p class="help">Plain steps for the state you picked. Federal names stay beside your state.</p>
     <p class="honesty" id="guide-honesty"></p>
     <div id="guide-federal" class="federal-box"></div>
     <div id="guide-topics"></div>
@@ -146,99 +186,81 @@
 
   <section class="card hidden" data-panel="verify">
     <h2>Verify</h2>
-    <p class="help">Check that a saved receipt still matches its fingerprint. Pass or fail only — not a truth score.</p>
-    <div class="giant-grid two">
-      <button class="giant" id="v-local" type="button">Check saved notes</button>
-      <button class="giant ghost-giant" id="v-run" type="button">Check pasted text</button>
-    </div>
-    <label for="v-jsonl">Paste a receipt file</label>
-    <textarea id="v-jsonl" placeholder="paste JSON or JSONL"></textarea>
-    <p id="v-verdict" class="verdict"></p>
-    <pre class="out" id="v-out"></pre>
-  </section>
-
-  <section class="card hidden" data-panel="io">
-    <h2>Import / Export</h2>
-    <p class="help">Add a file, bring in a receipt you already saved, or copy a receipt out. Try a sample if you just want to see how it looks.</p>
-    <div class="giant-grid three">
-      <button class="giant" id="btn-add-file" type="button">Add file</button>
-      <button class="giant ghost-giant" id="btn-import" type="button">Import receipt</button>
-      <button class="giant ghost-giant" id="btn-export" type="button">Export receipt</button>
-    </div>
-    <input id="add-file-input" class="hidden" type="file">
-    <input id="import-file-input" class="hidden" type="file" accept=".json,.jsonl,application/json,text/plain">
-    <div class="row">
-      <button class="act" id="btn-demo" type="button">Try a sample</button>
-    </div>
-    <div id="saved-box" class="saved-banner hidden" role="status">
-      <p class="saved-title">Saved a receipt for this file</p>
-      <p class="hash" id="saved-hash"></p>
-      <p class="muted" id="saved-note"></p>
-    </div>
-    <p class="error" id="home-err"></p>
-    <h3>Receipts</h3>
-    <div id="home-list"></div>
-    <div id="home-detail" class="detail hidden"></div>
+    <p class="help">Check that a saved receipt still matches its fingerprint. Pass or fail only.</p>
+    <button class="primary" id="v-local" type="button">Check saved notes</button>
+    <p id="v-verdict" class="verdict" role="status"></p>
+    <p class="help" id="v-plain"></p>
+    <details class="advanced">
+      <summary>Advanced</summary>
+      <label for="v-jsonl">Paste a receipt file</label>
+      <textarea id="v-jsonl" placeholder="Paste JSON or JSONL"></textarea>
+      <div class="row">
+        <button class="ghost" id="v-run" type="button">Check pasted text</button>
+      </div>
+      <pre class="out" id="v-out"></pre>
+    </details>
   </section>
 
   <section class="card hidden" data-panel="doctor">
     <h2>Check this computer</h2>
-    <p class="help">Doctor looks only at this machine. Debug stays here. No telemetry.</p>
-    <div class="giant-grid one">
-      <button class="giant" id="doc-run" type="button">Run doctor</button>
-    </div>
+    <p class="help">Doctor looks only at this machine.</p>
+    <button class="primary" id="doc-run" type="button">Run doctor</button>
     <p id="doc-plain" class="help"></p>
     <div id="doc-list"></div>
-    <pre class="out hidden" id="doc-out"></pre>
-    <h3>Optional lock</h3>
-    <p class="help">A password on this computer only. Not cloud login. Not full-disk encryption.</p>
-    <label for="lk-pass">Password</label>
-    <input id="lk-pass" type="password">
-    <div class="row">
-      <button class="act" id="lk-set" type="button">Set / replace</button>
-      <button class="ghost" id="lk-unlock" type="button">Unlock</button>
-      <button class="ghost" id="lk-clear" type="button">Clear lock</button>
-    </div>
-    <pre class="out" id="lk-out"></pre>
-    <details class="tools-details">
-      <summary>Engine tools (optional)</summary>
-      <p class="help">Only if those engines imported. MirageGrid is not a network.</p>
-      <div class="tools-grid">
-        <div class="mini">
-          <h3>VibeLock</h3>
-          <button class="ghost" data-tool="vibelock" type="button">Run</button>
-        </div>
-        <div class="mini">
-          <h3>CodeLock</h3>
-          <textarea id="cl-source">plain source text</textarea>
-          <input id="cl-ack" value="This tool alters perception, not meaning.">
-          <button class="ghost" data-tool="codelock" type="button">Render</button>
-        </div>
-        <div class="mini">
-          <h3>ShadowLock</h3>
-          <textarea id="sl-jsonl">{"id":"1","task_class":"visit","actual_outcome":"ok","actual_revenue":0,"actual_cost":0}</textarea>
-          <button class="ghost" data-tool="shadowlock" type="button">Observe</button>
-        </div>
-        <div class="mini">
-          <h3>VeilLock</h3>
-          <button class="ghost" data-tool="veillock" type="button">Encrypt frames</button>
-        </div>
-        <div class="mini">
-          <h3>GodLock</h3>
-          <textarea id="gl-text">local stress text</textarea>
-          <button class="ghost" data-tool="godlock" type="button">Submit</button>
-        </div>
-        <div class="mini">
-          <h3>StaticClock</h3>
-          <input id="sc-geo" value="Indianapolis">
-          <button class="ghost" data-tool="staticclock" type="button">Advise</button>
-        </div>
-        <div class="mini">
-          <h3>MirageGrid</h3>
-          <button class="ghost" data-tool="miragegrid" type="button">Assign</button>
-        </div>
+    <details class="advanced">
+      <summary>Advanced</summary>
+      <pre class="out" id="doc-out"></pre>
+      <h3>Optional lock</h3>
+      <p class="help" id="lk-status">No password set on this computer.</p>
+      <p class="help">A password on this computer only.</p>
+      <label for="lk-pass">Password</label>
+      <input id="lk-pass" type="password" autocomplete="current-password">
+      <div class="row">
+        <button class="ghost" id="lk-set" type="button">Set / replace</button>
+        <button class="ghost" id="lk-unlock" type="button">Unlock</button>
+        <button class="ghost" id="lk-clear" type="button">Clear lock</button>
       </div>
-      <pre class="out" id="tools-out"></pre>
+      <pre class="out" id="lk-out"></pre>
+      <details class="tools-details">
+        <summary>Engine tools</summary>
+        <p class="help">These run only if that engine is installed on this computer.</p>
+        <div class="tools-grid">
+          <div class="mini">
+            <h3>VibeLock</h3>
+            <button class="ghost" data-tool="vibelock" type="button">Run</button>
+          </div>
+          <div class="mini">
+            <h3>CodeLock</h3>
+            <textarea id="cl-source">plain source text</textarea>
+            <input id="cl-ack" value="This tool alters perception, not meaning.">
+            <button class="ghost" data-tool="codelock" type="button">Render</button>
+          </div>
+          <div class="mini">
+            <h3>ShadowLock</h3>
+            <textarea id="sl-jsonl">{"id":"1","task_class":"visit","actual_outcome":"ok","actual_revenue":0,"actual_cost":0}</textarea>
+            <button class="ghost" data-tool="shadowlock" type="button">Observe</button>
+          </div>
+          <div class="mini">
+            <h3>VeilLock</h3>
+            <button class="ghost" data-tool="veillock" type="button">Encrypt frames</button>
+          </div>
+          <div class="mini">
+            <h3>GodLock</h3>
+            <textarea id="gl-text">local stress text</textarea>
+            <button class="ghost" data-tool="godlock" type="button">Submit</button>
+          </div>
+          <div class="mini">
+            <h3>StaticClock</h3>
+            <input id="sc-geo" value="Indianapolis">
+            <button class="ghost" data-tool="staticclock" type="button">Advise</button>
+          </div>
+          <div class="mini">
+            <h3>MirageGrid</h3>
+            <button class="ghost" data-tool="miragegrid" type="button">Assign</button>
+          </div>
+        </div>
+        <pre class="out" id="tools-out"></pre>
+      </details>
     </details>
   </section>
 </main>
@@ -246,18 +268,27 @@
 <div id="lock-overlay" class="hidden">
   <div class="card">
     <h2>Unlock ForgeReceipts</h2>
-    <p class="help">Local password. Not Legal Advice. Data stays on this machine.</p>
-    <input id="ov-pass" type="password" placeholder="password">
-    <div class="row"><button class="act" id="ov-unlock" type="button">Unlock</button></div>
-    <p class="error" id="ov-err"></p>
+    <p class="help">Enter the password for this computer.</p>
+    <label for="ov-pass">Password</label>
+    <input id="ov-pass" type="password" autocomplete="current-password">
+    <div class="row"><button class="primary" id="ov-unlock" type="button">Unlock</button></div>
+    <p class="error" id="ov-err" role="alert"></p>
   </div>
 </div>
 
 <footer>
-  Aziel Eliab, Indianapolis · Apache-2.0 · Forks welcome ·
-  <button type="button" class="linkish" id="btn-doctor">Check this computer</button>
-  · <a href="https://forgereceipts-download-tracker.vibelock.workers.dev/">Counted download</a>
-  · <a href="https://github.com/AzielEliab/forgereceipts">GitHub</a>
+  <details class="about">
+    <summary>About</summary>
+    <p>Not Legal Advice. A receipt is not legal proof. ForgeReceipts keeps files on this computer and does not contact courts, Odyssey, or the cloud. No telemetry. No accounts.</p>
+    <p>Federal baseline stays in Guide (Troxel, Stanley, evidence and civil rules, UCCJEA). Your state is remembered on this computer.</p>
+    <p>Child's Best Interests First. Integrity Over Narrative. Local Control. Always.</p>
+    <p>Author: Aziel Eliab. Apache-2.0. Forks are welcome.</p>
+  </details>
+  <p class="foot-links">
+    <button type="button" class="linkish" id="btn-doctor">Check this computer</button>
+    · <a href="https://forgereceipts-download-tracker.vibelock.workers.dev/">Counted download</a>
+    · <a href="https://github.com/AzielEliab/forgereceipts">GitHub</a>
+  </p>
 </footer>
 <script src="/static/app.js"></script>
 </body>

@@ -20,6 +20,32 @@ def _post(url: str, payload: dict) -> tuple[int, dict]:
         return resp.status, json.loads(resp.read().decode("utf-8"))
 
 
+def test_local_page_follows_system_theme() -> None:
+    from pathlib import Path
+
+    root = Path(__file__).resolve().parents[1] / "forgereceipts" / "static"
+    css = (root / "style.css").read_text(encoding="utf-8")
+    html = (root / "index.html").read_text(encoding="utf-8")
+    assert "prefers-color-scheme" in css
+    assert ":focus-visible" in css
+    assert "#c9a227" in css
+    assert 'name="viewport"' in html
+    assert ">Advanced</summary>" in html
+    assert "Add file" in html
+
+
+def test_html_accept_stays_human_json_accept_is_json(base_url: str) -> None:
+    status, body = _get(base_url + "/")
+    assert status == 200
+    assert body.lstrip().startswith("<!DOCTYPE html>")
+    req = Request(base_url + "/", headers={"Accept": "application/json"})
+    with urlopen(req, timeout=5) as resp:
+        payload = json.loads(resp.read().decode("utf-8"))
+    assert payload["name"] == "ForgeReceipts"
+    assert payload["author"] == "Aziel Eliab"
+    assert payload["open"].startswith("http://127.0.0.1:")
+
+
 def test_get_root_contains_name_and_disclaimer(base_url: str) -> None:
     status, body = _get(base_url + "/")
     assert status == 200

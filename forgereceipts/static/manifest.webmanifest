@@ -1,10 +1,10 @@
 {
   "name": "ForgeReceipts",
   "short_name": "ForgeReceipts",
-  "description": "Local-first evidence integrity. Not legal advice.",
+  "description": "Save a receipt for a file on this computer.",
   "start_url": "/",
   "display": "standalone",
-  "background_color": "#0e1014",
-  "theme_color": "#c4a35a",
+  "background_color": "#f7f4ee",
+  "theme_color": "#c9a227",
   "lang": "en"
 }

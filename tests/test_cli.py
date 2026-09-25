@@ -36,3 +36,37 @@ def test_help_lists_doctor_and_verify_receipt(capsys) -> None:
     out = capsys.readouterr().out
     assert "doctor" in out
     assert "verify-receipt" in out
+
+
+def test_bare_command_is_a_welcome(capsys) -> None:
+    assert main([]) == 0
+    out = capsys.readouterr().out
+    assert "forgereceipts ui" in out
+    assert "http://127.0.0.1:8787" in out
+    assert "Add file" in out
+    assert "arguments are required" not in out
+    assert "Aziel Eliab" in out
+
+
+def test_unknown_command_has_a_next_step(capsys) -> None:
+    import pytest
+
+    with pytest.raises(SystemExit) as ei:
+        main(["bogus"])
+    assert ei.value.code == 2
+    err = capsys.readouterr().err
+    assert 'Unknown command "bogus"' in err
+    assert "forgereceipts --help" in err
+    assert "Traceback" not in err
+
+
+def test_unknown_flag_has_a_next_step(capsys) -> None:
+    import pytest
+
+    with pytest.raises(SystemExit) as ei:
+        main(["--not-a-real-flag-xyz"])
+    assert ei.value.code == 2
+    err = capsys.readouterr().err
+    assert "not recognized" in err
+    assert "forgereceipts --help" in err
+    assert "Traceback" not in err

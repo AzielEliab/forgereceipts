@@ -4,14 +4,34 @@
   const $$ = (sel) => Array.from(document.querySelectorAll(sel));
   const MAX_FILE = 12 * 1024 * 1024;
   const MODE_ALIASES = {
-    home: "log",
     incident: "log",
-    receipts: "io",
+    receipts: "home",
     filing: "file",
-    import: "io",
-    export: "io",
+    import: "home",
+    export: "home",
+    io: "home",
     tools: "doctor",
     lock: "doctor",
+  };
+  const PATH_MODES = {
+    "/": "home",
+    "/home": "home",
+    "/log": "log",
+    "/incident": "log",
+    "/journal": "journal",
+    "/forensics": "forensics",
+    "/file": "file",
+    "/filing": "file",
+    "/guide": "guide",
+    "/verify": "verify",
+    "/io": "io",
+    "/import": "import",
+    "/export": "export",
+    "/receipts": "receipts",
+    "/doctor": "doctor",
+    "/tools": "tools",
+    "/lock": "lock",
+    "/demo": "home",
   };
 
   let selectedHash = null;
@@ -35,10 +55,33 @@
   }
 
   function show(mode) {
-    const next = MODE_ALIASES[mode] || mode;
+    const requested = mode || "home";
+    const next = MODE_ALIASES[requested] || requested;
     $$("[data-panel]").forEach((el) => el.classList.toggle("hidden", el.getAttribute("data-panel") !== next));
-    $$("#nav button").forEach((b) => b.classList.toggle("active", b.dataset.mode === next));
-    history.replaceState(null, "", "#" + next);
+    const buttons = $$("#nav button");
+    const exact = buttons.some((b) => b.dataset.mode === requested);
+    buttons.forEach((b) => b.classList.toggle("active", exact ? b.dataset.mode === requested : b.dataset.mode === next));
+    const homeAdv = $("#home-advanced");
+    if (homeAdv && (requested === "io" || requested === "import" || requested === "export" || requested === "receipts")) {
+      homeAdv.open = true;
+    }
+    const more = $("#nav-more");
+    if (more && ["forensics", "file", "guide", "io", "doctor", "tools", "lock"].includes(requested)) {
+      more.open = true;
+    }
+    if (location.hash !== "#" + requested) history.replaceState(null, "", "#" + requested);
+  }
+
+  function plainResult(data) {
+    if (!data) return "";
+    if (data.error) return String(data.error);
+    const lines = [];
+    if (data.verdict) lines.push(String(data.verdict));
+    if (data.plain) lines.push(String(data.plain));
+    if (data.sha256) lines.push(String(data.sha256));
+    if (data.ok === true && !lines.length) lines.push("Done.");
+    if (data.ok === false && !data.error && !lines.length) lines.push("That did not match.");
+    return lines.join("\n");
   }
 
   function fillStateSelect(filter, selected) {
@@ -105,7 +148,7 @@
     const box = $("#saved-box");
     box.classList.remove("hidden");
     $("#saved-hash").textContent = data.sha256 || data.hash || (data.receipt && data.receipt.hash) || "";
-    $("#saved-note").textContent = (data.plain || "Saved a receipt for this file") + "  Not legal advice. A receipt is not legal proof.";
+    $("#saved-note").textContent = data.plain || "Saved a receipt for this file";
     $("#home-err").textContent = "";
   }
 
@@ -162,7 +205,7 @@
     const move = score.next_best_move || {};
     const flags = score.flags || [];
     el.innerHTML = `<div class="score">${escapeHtml(String(score.score ?? "—"))}</div>
-      <p class="muted">Pattern Strength Score — a local count, not a win chance.</p>
+      <p class="muted">A local count of notes and files on this computer. It is not a prediction.</p>
       <div class="bar"><span style="width:${Math.max(0, Math.min(100, score.score || 0))}%"></span></div>
       <p><strong>Next:</strong> ${escapeHtml(move.plain || "")}</p>
       <p><strong>Balance:</strong> ${escapeHtml(sway.label || "")}</p>
@@ -175,6 +218,12 @@
     const overlay = $("#lock-overlay");
     if (st.lock_set && !st.unlocked) overlay.classList.remove("hidden");
     else overlay.classList.add("hidden");
+    const status = $("#lk-status");
+    if (status) {
+      if (!st.lock_set) status.textContent = "No password set on this computer.";
+      else if (st.unlocked) status.textContent = "Unlocked on this computer.";
+      else status.textContent = "Locked. Enter the password to open your receipts.";
+    }
     $("#lk-out").textContent = JSON.stringify(st, null, 2);
     return st;
   }
@@ -198,7 +247,10 @@
     const list = $("#home-list");
     if (list) {
       list.innerHTML = "";
-      lastReceipts.slice().reverse().forEach((r) => list.appendChild(receiptCard(r)));
+      const rows = lastReceipts.slice().reverse();
+      rows.forEach((r) => list.appendChild(receiptCard(r)));
+      const empty = $("#home-empty");
+      if (empty) empty.classList.toggle("hidden", rows.length > 0);
     }
     if (selectedHash) {
       const row = lastReceipts.find((r) => r.hash === selectedHash);
@@ -269,7 +321,7 @@
     if (mode === "journal") refreshJournal();
     if (mode === "file") refreshFiling();
     if (mode === "guide") refreshGuide();
-    if (mode === "io") refreshReceipts();
+    if (mode === "home" || mode === "io" || mode === "import" || mode === "export") refreshReceipts();
     if (mode === "doctor") refreshLock();
   }));
 
@@ -351,7 +403,7 @@
           summary: "local file hash",
         }),
       });
-      $("#for-out").textContent = JSON.stringify(data, null, 2);
+      $("#for-out").textContent = plainResult(data) || JSON.stringify(data, null, 2);
       if (data.sha256) $("#for-expected").value = data.sha256;
       return;
     }
@@ -369,7 +421,7 @@
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ content_b64: b64, file_name: file.name, summary: "local file hash" }),
       });
-      $("#for-out").textContent = JSON.stringify(data, null, 2);
+      $("#for-out").textContent = plainResult(data) || JSON.stringify(data, null, 2);
       if (data.sha256) $("#for-expected").value = data.sha256;
     } catch (err) {
       $("#for-out").textContent = err.message || String(err);
@@ -384,7 +436,7 @@
     const data = await api("/api/forensics/verify", {
       method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(body),
     });
-    $("#for-out").textContent = JSON.stringify(data, null, 2);
+    $("#for-out").textContent = plainResult(data) || JSON.stringify(data, null, 2);
   });
 
   function filingFields() {
@@ -507,8 +559,9 @@
       method: "POST", headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ jsonl: $("#v-jsonl").value }),
     });
-    $("#v-verdict").textContent = data.verdict || "";
+    $("#v-verdict").textContent = data.verdict || (data.error ? "Could not check that text" : "");
     $("#v-verdict").className = "verdict " + ((data.verdict || "").toLowerCase());
+    if ($("#v-plain")) $("#v-plain").textContent = data.error || data.plain || "";
     $("#v-out").textContent = JSON.stringify(data, null, 2);
   });
   $("#v-local").addEventListener("click", async () => {
@@ -516,8 +569,9 @@
       method: "POST", headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ jsonl: "" }),
     });
-    $("#v-verdict").textContent = data.verdict || "";
+    $("#v-verdict").textContent = data.verdict || (data.error ? "Could not check saved notes" : "");
     $("#v-verdict").className = "verdict " + ((data.verdict || "").toLowerCase());
+    if ($("#v-plain")) $("#v-plain").textContent = data.error || data.plain || (data.verdict === "PASS" ? "Saved notes still match." : "");
     $("#v-out").textContent = JSON.stringify(data, null, 2);
   });
 
@@ -560,7 +614,6 @@
     $("#doc-list").innerHTML = (data.checks || []).map((c) =>
       `<p><strong>${escapeHtml(c.verdict)}</strong> ${escapeHtml(c.plain)}</p>`
     ).join("");
-    $("#doc-out").classList.remove("hidden");
     $("#doc-out").textContent = JSON.stringify(data, null, 2);
   });
 
@@ -574,14 +627,16 @@
     await refreshLegal(savedJurisdiction);
     // Browser form-restore can overwrite the select after JS runs.
     fillStateSelect("", savedJurisdiction);
-    const start = MODE_ALIASES[(location.hash || "#log").replace("#", "")] || (location.hash || "#log").replace("#", "") || "log";
+    const hash = (location.hash || "").replace("#", "");
+    const start = hash || PATH_MODES[location.pathname] || "home";
     show(start);
+    const resolved = MODE_ALIASES[start] || start;
     await refreshLock();
-    if (start === "log") await refreshLog();
-    if (start === "io") await refreshReceipts();
-    if (start === "journal") await refreshJournal();
-    if (start === "file") await refreshFiling();
-    if (start === "guide") await refreshGuide();
+    if (resolved === "log") await refreshLog();
+    if (resolved === "home") await refreshReceipts();
+    if (resolved === "journal") await refreshJournal();
+    if (resolved === "file") await refreshFiling();
+    if (resolved === "guide") await refreshGuide();
   }
 
   boot();
