@@ -2,7 +2,7 @@
 
 This module does not quote statutes, does not invent holdings, and is
 not legal advice. Indiana is the default selector *label* because the
-author lives in Indianapolis.
+user selects a jurisdiction label (no author-home claim).
 """
 
 from __future__ import annotations

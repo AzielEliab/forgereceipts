@@ -168,7 +168,7 @@ HANDLERS = {
     "shadowlock": lambda body: shadowlock_observe(str(body.get("jsonl") or "")),
     "veillock": lambda body: veillock_encrypt(),
     "godlock": lambda body: godlock_submit(str(body.get("text") or "local stress text")),
-    "staticclock": lambda body: staticclock_advise(str(body.get("geo") or "Indianapolis")),
+    "staticclock": lambda body: staticclock_advise(str(body.get("geo") or "United States")),
     "miragegrid": lambda body: miragegrid_assign(),
 }
 
