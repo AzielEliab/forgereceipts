@@ -5,15 +5,13 @@
 Whitepaper v1.0 — July 2026
 
 Author: Aziel Eliab
-Indianapolis, Indiana
 
 Empowering Documentation · Child-Focused Advocacy · Procedural Equity
 
 **DISCLAIMER:** This document describes a documentation and organization
 tool. It is **not legal advice** and does not guarantee any court
 outcome. Family law varies by jurisdiction. Consult a licensed attorney
-in your state. Canonical author is Aziel Eliab,
-Indianapolis.
+in your state. Canonical author is Aziel Eliab.
 
 ---
 
@@ -102,10 +100,9 @@ a local, append-only place to keep receipts.
 4. **Empowerment Through Education — without practicing law.** Plain
    English, templates, and named national sources (Troxel, Stanley,
    UCCJEA) as blurbs that tell the user to read the primary source.
-   Not legal advice. Indiana is a default *selector label* because the
-   author lives in Indianapolis. v0.3.0 ships structured public-label
-   profiles for all 50 states, DC, and territories; it still does not
-   encode a full statute book.
+   Not legal advice. Indiana remains one shipped jurisdiction profile
+   among all 50 states, DC, and territories (selector label only; not an
+   author-home claim). v0.3.0 still does not encode a full statute book.
 
 ---
 
@@ -189,8 +186,8 @@ Weights are engineering defaults. Documented in `forgereceipts/score.py`.
 
 Shipped names: Troxel v. Granville, 530 U.S. 57 (2000); Stanley v.
 Illinois, 405 U.S. 645 (1972); UCCJEA. Plain-English blurbs that
-refuse to state a holding for the user's facts. Indiana is the default
-selector label. Consult an attorney. Not legal advice.
+refuse to state a holding for the user's facts. Jurisdiction is a user
+selector label (no author-home claim). Consult an attorney. Not legal advice.
 
 ---
 
@@ -222,7 +219,6 @@ Child's Best Interests First. Integrity Over Narrative. Local Control. Always.
 Signed
 
 Aziel Eliab
-Indianapolis, Indiana
 July 2026
 
 **Not Legal Advice**

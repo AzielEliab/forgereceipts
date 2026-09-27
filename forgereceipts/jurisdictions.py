@@ -295,7 +295,7 @@ _PROFILES: list[dict[str, Any]] = [
             "Indiana custody and parenting-time papers commonly refer to "
             "the child's best interests. This app does not quote the "
             "Indiana Code or apply it to your facts. Default selector "
-            "because the author lives in Indianapolis. Not legal advice."
+            "as one shipped US state profile. Not legal advice. No author-home claim."
         ),
         guidelines_label="Indiana Parenting Time Guidelines",
         guidelines_note=(
@@ -311,9 +311,8 @@ _PROFILES: list[dict[str, Any]] = [
         efiling_name=_odyssey("Indiana", "Odyssey / mycase.in.gov")[1],
         efiling_note=_odyssey("Indiana", "Odyssey / mycase.in.gov")[2],
         stub=(
-            "Indiana is the default selector because the canonical author "
-            "lives in Indianapolis. Named public guideline titles only. "
-            "Not legal advice."
+            "Indiana is one shipped US state profile (named public guideline "
+            "titles only). Not an author-home claim. Not legal advice."
         ),
     ),
     _profile(
